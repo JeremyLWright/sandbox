@@ -1,0 +1,46 @@
+\title{S4 Terminal FPGA Specification\\Software Requirements Document}
+
+\author{
+        Jeremy Wright \\
+        Platforms
+}
+\date{\today}
+
+\documentclass[12pt]{article}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Specification for the FPGA Logic.
+\end{abstract}
+\clearpage
+\section{Introduction}
+\section{UART}\label{uart}
+The UART core is based on the UART to Bus Core \cite{U2B:01}.
+\subsection{Architecture}
+
+The UART uses a data table, to feed listeners data. The continuously dumped
+out the serial port. Listeners may write data to a specific register, however
+reads are not supported. 
+\subsection{Wire Protocol}
+\subsection{Serial Configuration}
+
+\section{Command Processor}\label{cmdProcessor}
+
+\section{GPIO}\label{gpio}
+\subsection{I/O Configuration}
+\subsection{Register Map}
+\subsection{Output Types}
+
+
+\section{PWM}
+
+
+\section{Wishbone System Bus}
+The logical blocks are inner-connected using the wishbone system bus\cite{OpenCores:01}.
+
+\bibliographystyle{abbrv}
+\bibliography{SRD}
+
+\end{document}
