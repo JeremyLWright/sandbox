@@ -2,13 +2,10 @@
 
 using namespace SpatialDB;
 
-Region::Region(uint64_t id,const Point& A, const Point& B, const Point& C, const Point& D)
+Region::Region(uint64_t id, SpatialModel& model)
 {
-    _A = A;
-    _B = B;
-    _C = C;
-    _D = D;
     _spatial_id = id;
+    _spatial_model = &model;
 }
 
 uint64_t Region::get_id() const

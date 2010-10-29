@@ -18,10 +18,14 @@ extern "C" {
 
 #define CREATE_TABLE_REGIONS_QUERY ("CREATE VIRTUAL TABLE \"Regions\" USING rtree (\
     \"Id\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
-    \"Max_X\" INTEGER NOT NULL,\
-    \"Max_Y\" INTEGER NOT NULL,\
-    \"Min_X\" INTEGER NOT NULL,\
-    \"Min_Y\" INTEGER NOT NULL)")
+    \"AX\" INTEGER NOT NULL,\
+    \"AY\" INTEGER NOT NULL,\
+    \"BX\" INTEGER NOT NULL,\
+    \"BY\" INTEGER NOT NULL,\
+    \"CX\" INTEGER NOT NULL,\
+    \"CY\" INTEGER NOT NULL,\
+    \"DX\" INTEGER NOT NULL,\
+    \"DY\" INTEGER NOT NULL)")
 #define CREATE_TABLE_AUTOMATONS_QUERY "CREATE TABLE \"Automatons\"\
 ( \
 \"Id\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
@@ -35,6 +39,13 @@ char* SpatialModel::query_create_automaton(int X, int Y)
     sprintf(query, "INSERT INTO 'Automatons' ('Loc_X', 'Loc_Y') VALUES ('%d','%d')", X, Y);
     return query;
 
+}
+
+char* SpatialModel::query_create_region(const Point& A, const Point& B, const Point& C, const Point& D)
+{
+    char* query = new char[100];
+    sprintf(query, "INSERT INTO 'Regions' ('AX', 'AY', 'BX', 'BY', 'CX', 'CY', 'DX', 'DY') VALUES ('%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d')", A.X, A.Y, B.X, B.Y, C.X, C.Y, D.X, D.Y);
+    return query;
 }
 
 SpatialModel::SpatialModel()
@@ -88,8 +99,14 @@ list<Automaton>& SpatialModel::select(const Region& region)
 
 const Region& SpatialModel::create(const Point& A, const Point& B, const Point& C, const Point& D)
 {
-    cout << "DEBUG: Creating watch region." << endl;
-    const Region* reg = new Region(0, A, B, C, D);
+
+    int r = sqlite3_exec(database_connection, 
+                    query_create_region(A, B, C, D),
+                    create_table_callback,
+                    (void*)1,
+                    &default_error_string);
+    int y = sqlite3_last_insert_rowid(database_connection);
+    Region* reg = new Region(y, *this);
     return *reg;
 }
 
@@ -100,13 +117,8 @@ Automaton& SpatialModel::create(const Point& origin)
                     create_table_callback,
                     (void*)1,
                     &default_error_string);
-    if(r == 0)
-        cout << "Automaton created Successfully" << endl;
-    else
-        cout << default_error_string << endl;
     int y = sqlite3_last_insert_rowid(database_connection);
     Automaton* aut = new Automaton(y, *this);
-    cout << "DEBUG: Creating Automaton  "<< y << endl;
     return *aut;
 }
 

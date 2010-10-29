@@ -24,6 +24,7 @@ namespace SpatialDB {
         protected:
             SpatialModel();
             char* query_create_automaton(int X, int Y);
+            char* query_create_region(const Point& A, const Point& B, const Point& C, const Point& D);
             sqlite3* database_connection;
         private:
             static SpatialModel* _instance;

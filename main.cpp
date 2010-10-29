@@ -8,5 +8,7 @@ int main(void)
     const Point* t = new Point(4,5);
     for(int i = 0 ; i < 100 ; i++)
         y->create(*t);
+/*    for(int i = 0; i < 10 ; i++)
+        y->create(*t,*t,*t,*t);*/
     return 0;
 }
