@@ -7,7 +7,7 @@ namespace SpatialDB {
     class RegionFactory {
         public: 
             RegionFactory();
-            virtual ~RegionFactory();
+            ~RegionFactory();
             const Region& get_region(Point A, Point B, Point C, Point D);
         protected:
             SpatialModel* _spatial_instance;

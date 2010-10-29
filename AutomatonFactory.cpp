@@ -5,7 +5,7 @@ AutomatonFactory::AutomatonFactory()
 {
     this->_simulated_id = 0;
     
-    _spatial_model = &(SpatialModel::get_instance());
+    _spatial_model = SpatialModel::get_instance();
 }
 
 Automaton& AutomatonFactory::get_automaton()

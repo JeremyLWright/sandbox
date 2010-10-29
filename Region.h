@@ -5,10 +5,15 @@
 namespace SpatialDB {
     class Region {
         public:
-            Region(uint64_t id, Point A, Point B, Point C, Point D);
-            virtual ~Region();
+            Region(uint64_t id, const Point& A, const Point& B, const Point& C, const Point& D);
+            ~Region();
+            uint64_t get_id() const;
         protected:
-            uint64_t spatial_id;
+            uint64_t _spatial_id;
+            Point _A;
+            Point _B;
+            Point _C;
+            Point _D;
     };
 }
 #endif

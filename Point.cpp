@@ -2,8 +2,13 @@
 
 using namespace SpatialDB;
 
+Point::Point()
+{
+    this->X = 0;
+    this->Y = 0;
+}
 Point::Point(int X,int Y)
 {
-    _x = X;
-    _y = Y;
+    this->X = X;
+    this->Y = Y;
 }

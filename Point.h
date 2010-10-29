@@ -3,10 +3,10 @@
 namespace SpatialDB {
     class Point {
         public:
+        Point();
         Point( int X, int Y);
-        protected:
-        int _x;
-        int _y;
+        int X;
+        int Y;
     };
 }
 #endif

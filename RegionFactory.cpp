@@ -4,7 +4,7 @@ using namespace SpatialDB;
 RegionFactory::RegionFactory()
 {
     simulated_id = 0;
-    this->_spatial_instance = &(SpatialModel::get_instance());
+    this->_spatial_instance = SpatialModel::get_instance();
 }
 
 const Region& RegionFactory::get_region(Point A, Point B, Point C, Point D)
