@@ -24,7 +24,7 @@ endif()
 add_dependencies(doc doxygen)
 
 set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_CXX_FLAGS_DEBUG "-O0 -pedantic -std=c++0X -Wall")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -pedantic -std=c++0x -Wall")
 set(PROJECT_SOURCE_FILES
     Point.cpp
     Automaton.cpp
@@ -45,7 +45,12 @@ if(GTEST_FOUND)
                       COMMAND test_spatialdb
                       DEPENDS test_spatialdb)
     add_executable(test_spatialdb
-                    tests/test_Region.cpp)
+                    tests/test_Region.cpp
+                    tests/test_Point.cpp
+                    tests/test_Automaton.cpp
+                    tests/test_AutomatonFactory.cpp
+                    tests/test_SpatialModel.cpp
+                    tests/test_RegionFactory.cpp)
     add_library(spatialdb STATIC ${PROJECT_SOURCE_FILES})
     target_link_libraries(test_spatialdb spatialdb)
     target_link_libraries(test_spatialdb ${GTEST_BOTH_LIBRARIES})
