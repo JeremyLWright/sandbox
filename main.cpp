@@ -6,5 +6,7 @@ int main(void)
 {
     SpatialModel* y = SpatialModel::get_instance();
     const Point* t = new Point(4,5);
-    y->create(*t);
+    for(int i = 0 ; i < 100 ; i++)
+        y->create(*t);
+    return 0;
 }

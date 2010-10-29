@@ -1,13 +1,15 @@
+
+#ifndef SPATIALMODEL_H
+#define SPATIALMODEL_H
 #include "Point.h"
 #include "Region.h"
 #include "Automaton.h"
 #include <list>
+#include <string>
 extern "C" {
 #include "sqlite3.h"
 }
-#ifndef SPATIALMODEL_H
-#define SPATIALMODEL_H
-
+using namespace std;
 namespace SpatialDB {
     class SpatialModel {
         public: 
@@ -21,6 +23,7 @@ namespace SpatialDB {
             const Point& select(const Automaton& aut);
         protected:
             SpatialModel();
+            char* query_create_automaton(int X, int Y);
             sqlite3* database_connection;
         private:
             static SpatialModel* _instance;

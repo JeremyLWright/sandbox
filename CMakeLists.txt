@@ -24,8 +24,8 @@ endif()
 add_dependencies(doc doxygen)
 
 set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_CXX_FLAGS_DEBUG "-O0 -pedantic -std=c++0x -Wall")
-set(CMAKE_C_FLAGS "-DSQLITE_ENABLE_RTREE=1")
+set(CMAKE_CXX_FLAGS "-O0 -pedantic -std=c++0x -Wall")
+set(CMAKE_C_FLAGS "-DSQLITE_ENABLE_RTREE=1 ")
 set(PROJECT_SOURCE_FILES
     Point.cpp
     Automaton.cpp
