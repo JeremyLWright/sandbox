@@ -8,6 +8,12 @@ SpatialModel* SpatialModel::_instance = 0;
 SpatialModel::SpatialModel()
 {
     cout << "Creating SpatialModel" << endl;
+    int r = sqlite3_open("world_view.db", &database_connection);
+    if(r == 0)
+        cout << "DB Creation Success." << endl;
+    else
+        cout << "DB Creation Failed. " << endl;
+
 }
 
 SpatialModel* SpatialModel::get_instance()

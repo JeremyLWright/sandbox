@@ -7,7 +7,7 @@ find_package(Doxygen)
 
 include_directories(${GTEST_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
+include_directories(sqlite3)
 #doxygen confg
 add_custom_target(doxygen
                     ${DOXYGEN_EXECUTABLE}
@@ -25,6 +25,7 @@ add_dependencies(doc doxygen)
 
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -pedantic -std=c++0x -Wall")
+set(CMAKE_C_FLAGS "-DSQLITE_ENABLE_RTREE=1")
 set(PROJECT_SOURCE_FILES
     Point.cpp
     Automaton.cpp
@@ -35,10 +36,12 @@ set(PROJECT_SOURCE_FILES
     RegionFactory.cpp
     Region.cpp
     )
+    
+add_library(sqlite3 STATIC sqlite3.c)
 
 # Build the executable 
 add_executable(main main.cpp ${PROJECT_SOURCE_FILES})
-
+target_link_libraries(main sqlite3 pthread dl)
 
 if(GTEST_FOUND)
     add_custom_target(test
@@ -52,6 +55,6 @@ if(GTEST_FOUND)
                     tests/test_SpatialModel.cpp
                     tests/test_RegionFactory.cpp)
     add_library(spatialdb STATIC ${PROJECT_SOURCE_FILES})
-    target_link_libraries(test_spatialdb spatialdb)
+    target_link_libraries(test_spatialdb spatialdb sqlite3)
     target_link_libraries(test_spatialdb ${GTEST_BOTH_LIBRARIES})
 endif(GTEST_FOUND)

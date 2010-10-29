@@ -2,6 +2,9 @@
 #include "Region.h"
 #include "Automaton.h"
 #include <list>
+extern "C" {
+#include "sqlite3.h"
+}
 #ifndef SPATIALMODEL_H
 #define SPATIALMODEL_H
 
@@ -18,7 +21,7 @@ namespace SpatialDB {
             const Point& select(const Automaton& aut);
         protected:
             SpatialModel();
-            int database_connection;
+            sqlite3* database_connection;
         private:
             static SpatialModel* _instance;
     };
