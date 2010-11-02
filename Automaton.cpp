@@ -22,3 +22,12 @@ uint64_t SpatialDB::Automaton::get_id() const
 {
     return _spatial_id;
 }
+namespace SpatialDB {
+bool operator==(const Automaton& left, const Automaton& right)
+{
+    if(left.get_id() == right.get_id())
+        return true;
+    else
+        return false;
+}
+}

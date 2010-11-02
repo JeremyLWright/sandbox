@@ -1,5 +1,5 @@
 #include "Region.h"
-
+#include "SpatialModel.h"
 using namespace SpatialDB;
 
 Region::Region(uint64_t id, SpatialModel& model)
@@ -12,3 +12,10 @@ uint64_t Region::get_id() const
 {
     return _spatial_id;
 }
+
+std::list<Automaton>& Region::select() const
+{
+    return this->_spatial_model->select(*this);
+}
+
+

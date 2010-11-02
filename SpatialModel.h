@@ -2,8 +2,6 @@
 #ifndef SPATIALMODEL_H
 #define SPATIALMODEL_H
 #include "Point.h"
-#include "Region.h"
-#include "Automaton.h"
 #include <list>
 #include <string>
 extern "C" {
@@ -11,6 +9,9 @@ extern "C" {
 }
 using namespace std;
 namespace SpatialDB {
+    class Region;
+    class Automaton;
+
     class SpatialModel {
         public: 
             static SpatialModel* get_instance(); 

@@ -9,6 +9,7 @@ namespace SpatialDB {
         int X;
         int Y;
         friend std::ostream& operator<<(std::ostream& out, const Point& obj);
+        bool operator==(const Point& right) const;
     };
 }
 #endif

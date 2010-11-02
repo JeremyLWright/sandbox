@@ -2,6 +2,9 @@
 #include <iostream>
 #include <sstream>
 #include <cstdio>
+#include "Region.h"
+#include "Automaton.h"
+
 using namespace std;
 using namespace SpatialDB;
 
@@ -10,13 +13,12 @@ SpatialModel* SpatialModel::_instance = 0;
 extern "C" {
     int create_table_callback(void* i, int j, char** k, char** l)
     {
-        cout << j << endl << k << endl << l << endl;
         return 0;
     }
     char* default_error_string;
 }
 
-#define CREATE_TABLE_REGIONS_QUERY ("CREATE VIRTUAL TABLE \"Regions\" USING rtree (\
+#define CREATE_TABLE_REGIONS_QUERY ("CREATE TABLE \"Regions\"  (\
     \"Id\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
     \"AX\" INTEGER NOT NULL,\
     \"AY\" INTEGER NOT NULL,\
@@ -26,7 +28,7 @@ extern "C" {
     \"CY\" INTEGER NOT NULL,\
     \"DX\" INTEGER NOT NULL,\
     \"DY\" INTEGER NOT NULL)")
-#define CREATE_TABLE_AUTOMATONS_QUERY "CREATE TABLE \"Automatons\"\
+#define CREATE_TABLE_AUTOMATONS_QUERY "CREATE TABLE \"Automatons\" \
 ( \
 \"Id\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
 \"Loc_X\" INTEGER NOT NULL,\
@@ -43,19 +45,14 @@ char* SpatialModel::query_create_automaton(int X, int Y)
 
 char* SpatialModel::query_create_region(const Point& A, const Point& B, const Point& C, const Point& D)
 {
-    char* query = new char[100];
+    char* query = new char[150];
     sprintf(query, "INSERT INTO 'Regions' ('AX', 'AY', 'BX', 'BY', 'CX', 'CY', 'DX', 'DY') VALUES ('%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d')", A.X, A.Y, B.X, B.Y, C.X, C.Y, D.X, D.Y);
     return query;
 }
 
 SpatialModel::SpatialModel()
 {
-    cout << "Creating SpatialModel" << endl;
-    int r = sqlite3_open("world_view.db", &database_connection);
-    if(r == 0)
-        cout << "DB Creation Success." << endl;
-    else
-        cout << "DB Creation Failed. " << endl;
+    int r = sqlite3_open("", &database_connection);
     
     /* Initialize the database object */
     r = sqlite3_exec(database_connection, 
@@ -63,19 +60,11 @@ SpatialModel::SpatialModel()
                     create_table_callback,
                     (void*)1,
                     &default_error_string);
-    if(r == 0)
-        cout << "Table created Successfully" << endl;
-    else
-        cout << default_error_string << endl;
     r = sqlite3_exec(   database_connection,
                         CREATE_TABLE_AUTOMATONS_QUERY,
                         create_table_callback,
                         (void*)1,
                         &default_error_string);
-    if(r == 0)
-        cout << "Table created Successfully" << endl;
-    else
-        cout << default_error_string << endl;
 }
 
 SpatialModel* SpatialModel::get_instance()
@@ -87,13 +76,64 @@ SpatialModel* SpatialModel::get_instance()
 
 void SpatialModel::watch(const Region& region)
 {
-    cout << "DEBUG: Setting Watch on region: " << region.get_id() << endl;
 }
 
 list<Automaton>& SpatialModel::select(const Region& region)
 {
-    cout << "DEBUG: Fetching all Automatons within region: " << region.get_id() << endl;
     list<Automaton>* l = new list<Automaton>();
+    char* query = new char[200];
+    Point A = Point();
+    Point B = Point();
+    Point C = Point();
+    // Fetch Regions Points from the database
+    sprintf(query, "SELECT AX, BX, CY, AY FROM Regions WHERE Id=%lu", region.get_id()); 
+    sqlite3_stmt* select_statement = 0;
+    sqlite3_stmt* stmt2 = 0;
+    int r = sqlite3_prepare(database_connection,
+                            query,
+                            -1,
+                            &select_statement,
+                            0);
+
+    delete query;
+    if(r == SQLITE_OK)
+    {
+        r = sqlite3_step(select_statement);
+        
+        if(r == SQLITE_DONE || r == SQLITE_ROW)
+        {
+            A.X = sqlite3_column_int(select_statement, 0);
+            B.X = sqlite3_column_int(select_statement, 1);
+            C.Y = sqlite3_column_int(select_statement, 2);
+            A.Y = sqlite3_column_int(select_statement, 3);
+        
+        }
+        sqlite3_finalize(select_statement);
+    }
+
+    char* query2 = new char[300];
+    //Create the Region bounding query
+    sprintf(query, "SELECT Id FROM Automatons WHERE (Loc_X >= %d AND Loc_X <= %d AND Loc_Y >= %d AND Loc_Y <= %d)", A.X, B.X, C.Y, A.Y);
+    r = sqlite3_prepare(database_connection,
+                            query2,
+                            -1,
+                            &stmt2,
+                            0);
+    if(r == SQLITE_OK)
+    { 
+        do{
+            r = sqlite3_step(stmt2);
+            int id = sqlite3_column_int(stmt2, 0);
+            if( r == SQLITE_ROW){
+            Automaton* a = new Automaton(id, *this);
+            l->push_back(*a);    
+            }
+        } while(r == SQLITE_ROW);
+        sqlite3_finalize(stmt2);
+    }
+
+    //Fetch all the Automatons from the database withint the bounded region.
+
     return *l;
 }
 
@@ -124,7 +164,6 @@ Automaton& SpatialModel::create(const Point& origin)
 
 list<Automaton>& SpatialModel::select(const Point& point)
 {
-    cout << "DEBUG: Fetching all Automatons at Point (" << point.X << ", " << point.Y << ")." << endl;
     list<Automaton>* l = new list<Automaton>();
     return *l;
 }
@@ -132,23 +171,17 @@ list<Automaton>& SpatialModel::select(const Point& point)
 void SpatialModel::update(Automaton& aut, const Point& point)
 {
     
-    cout << "Updating Automaton's Position" << endl;
     char* query = new char[100];
-    sprintf(query, "UPDATE Automatons SET Loc_X=%d ,Loc_Y=%d WHERE Id=%ld", point.X, point.Y, aut.get_id());
-    cout << "Query: " << query << endl;
+    sprintf(query, "UPDATE Automatons SET Loc_X=%d ,Loc_Y=%d WHERE Id=%lu", point.X, point.Y, aut.get_id());
     int r = sqlite3_exec(database_connection, query, create_table_callback, (void*)1, &default_error_string);
-    if(r != 0)
-        cout << default_error_string << endl;
 
 }
 
 
 const Point& SpatialModel::select(const Automaton& aut)
 {
-    cout << "Getching Automaton #" << aut.get_id() << "'s position." << endl;
     char* query = new char[100];
-    sprintf(query, "SELECT Loc_X, Loc_Y FROM Automatons WHERE Id=%ld", aut.get_id());
-    cout << "Query: " << query << endl;
+    sprintf(query, "SELECT Loc_X, Loc_Y FROM Automatons WHERE Id=%lu", aut.get_id());
     sqlite3_stmt* select_statement = 0; 
     int r = sqlite3_prepare(database_connection,
                             query,
@@ -157,11 +190,9 @@ const Point& SpatialModel::select(const Automaton& aut)
                             0);
     if(r == SQLITE_OK)
     {
-        cout << "Statement Compiled" << endl;
         r = sqlite3_step(select_statement);
         if(r == SQLITE_ROW)
         {
-            cout << "Statement executed." << endl;
             int x = sqlite3_column_int(select_statement, 0);
             int y = sqlite3_column_int(select_statement, 1);
             const Point* p = new Point(x,y);
@@ -171,7 +202,7 @@ const Point& SpatialModel::select(const Automaton& aut)
     }
 
 
-//TODO Fix this return                        
+//TODO Fix this return statement.                    
 }
 
 

@@ -10,6 +10,7 @@ namespace SpatialDB {
             void update_location(const Point& next_position);
             const Point& get_location();
             uint64_t get_id() const;
+            friend bool operator==(const Automaton& left, const Automaton& right);
         protected:
             uint64_t _spatial_id;
             SpatialDB::SpatialModel* _spatial_model;

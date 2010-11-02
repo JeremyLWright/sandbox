@@ -17,6 +17,7 @@ int main(void)
          
         cout << "Automaton at: " << (a.get_location()) << endl;
         a.update_location(Point(0, i));
+        
     }
     return 0;
 }
