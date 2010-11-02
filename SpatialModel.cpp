@@ -133,13 +133,45 @@ void SpatialModel::update(Automaton& aut, const Point& point)
 {
     
     cout << "Updating Automaton's Position" << endl;
+    char* query = new char[100];
+    sprintf(query, "UPDATE Automatons SET Loc_X=%d ,Loc_Y=%d WHERE Id=%ld", point.X, point.Y, aut.get_id());
+    cout << "Query: " << query << endl;
+    int r = sqlite3_exec(database_connection, query, create_table_callback, (void*)1, &default_error_string);
+    if(r != 0)
+        cout << default_error_string << endl;
+
 }
+
 
 const Point& SpatialModel::select(const Automaton& aut)
 {
     cout << "Getching Automaton #" << aut.get_id() << "'s position." << endl;
-    const Point* p = new Point(0,0);
-    return *p;
+    char* query = new char[100];
+    sprintf(query, "SELECT Loc_X, Loc_Y FROM Automatons WHERE Id=%ld", aut.get_id());
+    cout << "Query: " << query << endl;
+    sqlite3_stmt* select_statement = 0; 
+    int r = sqlite3_prepare(database_connection,
+                            query,
+                            -1,
+                            &select_statement,
+                            0);
+    if(r == SQLITE_OK)
+    {
+        cout << "Statement Compiled" << endl;
+        r = sqlite3_step(select_statement);
+        if(r == SQLITE_ROW)
+        {
+            cout << "Statement executed." << endl;
+            int x = sqlite3_column_int(select_statement, 0);
+            int y = sqlite3_column_int(select_statement, 1);
+            const Point* p = new Point(x,y);
+            sqlite3_finalize(select_statement);
+            return *p;
+        }
+    }
+
+
+//TODO Fix this return                        
 }
 
 
