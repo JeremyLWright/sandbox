@@ -3,7 +3,7 @@
 #include <sstream>
 #include <cstdio>
 #include "Region.h"
-#include "Automaton.h"
+#include "Lemming.h"
 
 using namespace std;
 using namespace SpatialDB;
@@ -28,17 +28,17 @@ extern "C" {
     \"CY\" INTEGER NOT NULL,\
     \"DX\" INTEGER NOT NULL,\
     \"DY\" INTEGER NOT NULL)")
-#define CREATE_TABLE_AUTOMATONS_QUERY "CREATE TABLE \"Automatons\" \
+#define CREATE_TABLE_AUTOMATONS_QUERY "CREATE TABLE \"Lemmings\" \
 ( \
 \"Id\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
 \"Loc_X\" INTEGER NOT NULL,\
 \"Loc_Y\" INTEGER NOT NULL)"
 
 
-char* SpatialModel::query_create_automaton(int X, int Y)
+char* SpatialModel::query_create_lemming(int X, int Y)
 {
     char* query = new char[100];
-    sprintf(query, "INSERT INTO 'Automatons' ('Loc_X', 'Loc_Y') VALUES ('%d','%d')", X, Y);
+    sprintf(query, "INSERT INTO 'Lemmings' ('Loc_X', 'Loc_Y') VALUES ('%d','%d')", X, Y);
     return query;
 
 }
@@ -78,9 +78,9 @@ void SpatialModel::watch(const Region& region)
 {
 }
 
-list<Automaton>& SpatialModel::select(const Region& region)
+list<Lemming>& SpatialModel::select(const Region& region)
 {
-    list<Automaton>* l = new list<Automaton>();
+    list<Lemming>* l = new list<Lemming>();
     char* query = new char[200];
     Point A = Point();
     Point B = Point();
@@ -113,7 +113,7 @@ list<Automaton>& SpatialModel::select(const Region& region)
 
     char* query2 = new char[300];
     //Create the Region bounding query
-    sprintf(query, "SELECT Id FROM Automatons WHERE (Loc_X >= %d AND Loc_X <= %d AND Loc_Y >= %d AND Loc_Y <= %d)", A.X, B.X, C.Y, A.Y);
+    sprintf(query, "SELECT Id FROM Lemmings WHERE (Loc_X >= %d AND Loc_X <= %d AND Loc_Y >= %d AND Loc_Y <= %d)", A.X, B.X, C.Y, A.Y);
     r = sqlite3_prepare(database_connection,
                             query2,
                             -1,
@@ -125,14 +125,14 @@ list<Automaton>& SpatialModel::select(const Region& region)
             r = sqlite3_step(stmt2);
             int id = sqlite3_column_int(stmt2, 0);
             if( r == SQLITE_ROW){
-            Automaton* a = new Automaton(id, *this);
+            Lemming* a = new Lemming(id, *this);
             l->push_back(*a);    
             }
         } while(r == SQLITE_ROW);
         sqlite3_finalize(stmt2);
     }
 
-    //Fetch all the Automatons from the database withint the bounded region.
+    //Fetch all the Lemmings from the database withint the bounded region.
 
     return *l;
 }
@@ -150,38 +150,38 @@ const Region& SpatialModel::create(const Point& A, const Point& B, const Point& 
     return *reg;
 }
 
-Automaton& SpatialModel::create(const Point& origin)
+Lemming& SpatialModel::create(const Point& origin)
 {
     int r = sqlite3_exec(database_connection, 
-                    query_create_automaton(origin.X, origin.Y),
+                    query_create_lemming(origin.X, origin.Y),
                     create_table_callback,
                     (void*)1,
                     &default_error_string);
     int y = sqlite3_last_insert_rowid(database_connection);
-    Automaton* aut = new Automaton(y, *this);
+    Lemming* aut = new Lemming(y, *this);
     return *aut;
 }
 
-list<Automaton>& SpatialModel::select(const Point& point)
+list<Lemming>& SpatialModel::select(const Point& point)
 {
-    list<Automaton>* l = new list<Automaton>();
+    list<Lemming>* l = new list<Lemming>();
     return *l;
 }
 
-void SpatialModel::update(Automaton& aut, const Point& point)
+void SpatialModel::update(Lemming& aut, const Point& point)
 {
     
     char* query = new char[100];
-    sprintf(query, "UPDATE Automatons SET Loc_X=%d ,Loc_Y=%d WHERE Id=%lu", point.X, point.Y, aut.get_id());
+    sprintf(query, "UPDATE Lemmings SET Loc_X=%d ,Loc_Y=%d WHERE Id=%lu", point.X, point.Y, aut.get_id());
     int r = sqlite3_exec(database_connection, query, create_table_callback, (void*)1, &default_error_string);
 
 }
 
 
-const Point& SpatialModel::select(const Automaton& aut)
+const Point& SpatialModel::select(const Lemming& aut)
 {
     char* query = new char[100];
-    sprintf(query, "SELECT Loc_X, Loc_Y FROM Automatons WHERE Id=%lu", aut.get_id());
+    sprintf(query, "SELECT Loc_X, Loc_Y FROM Lemmings WHERE Id=%lu", aut.get_id());
     sqlite3_stmt* select_statement = 0; 
     int r = sqlite3_prepare(database_connection,
                             query,

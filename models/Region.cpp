@@ -13,7 +13,7 @@ uint64_t Region::get_id() const
     return _spatial_id;
 }
 
-std::list<Automaton>& Region::select() const
+std::list<Lemming>& Region::select() const
 {
     return this->_spatial_model->select(*this);
 }

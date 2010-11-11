@@ -4,13 +4,13 @@
 #include "Point.h"
 namespace SpatialDB {
     class SpatialModel;
-    class Automaton {
+    class Lemming {
         public:
-            Automaton(uint64_t id, SpatialModel& spatial_model);
+            Lemming(uint64_t id, SpatialModel& spatial_model);
             void update_location(const Point& next_position);
             const Point& get_location();
             uint64_t get_id() const;
-            friend bool operator==(const Automaton& left, const Automaton& right);
+            friend bool operator==(const Lemming& left, const Lemming& right);
         protected:
             uint64_t _spatial_id;
             SpatialDB::SpatialModel* _spatial_model;

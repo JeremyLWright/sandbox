@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "RegionFactory.h"
-#include "AutomatonFactory.h"
+#include "LemmingFactory.h"
 using namespace SpatialDB;
 
 class RegionTest : public testing::Test {
@@ -28,12 +28,12 @@ TEST_F(RegionTest, CreateRegion)
 */
 TEST_F(RegionTest, SelectRegion)
 {
-    AutomatonFactory& atf = *(new AutomatonFactory());
-    Automaton& A1 = atf.get_automaton();
+    LemmingFactory& atf = *(new LemmingFactory());
+    Lemming& A1 = atf.get_lemming();
     A1.update_location(Point(3,2));
-    Automaton& A2 = atf.get_automaton();
+    Lemming& A2 = atf.get_lemming();
     A2.update_location(Point(3,2));
-    Automaton& A3 = atf.get_automaton();
+    Lemming& A3 = atf.get_lemming();
     A3.update_location(Point(4,3));
 
     Point A = Point(1,4);
@@ -42,6 +42,6 @@ TEST_F(RegionTest, SelectRegion)
     Point D = Point(1,1);
 
     const Region& test_region = rf->get_region(A, B, C, D);
-    std::list<Automaton>& atom_list = test_region.select();
+    std::list<Lemming>& atom_list = test_region.select();
     EXPECT_EQ(atom_list.size(), 3);
 }

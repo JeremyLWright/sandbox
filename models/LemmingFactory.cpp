@@ -1,16 +1,16 @@
-#include <AutomatonFactory.h>
+#include <LemmingFactory.h>
 using namespace SpatialDB;
 
-AutomatonFactory::AutomatonFactory()
+LemmingFactory::LemmingFactory()
 {
     this->_simulated_id = 0;
     
     _spatial_model = SpatialModel::get_instance();
 }
 
-Automaton& AutomatonFactory::get_automaton()
+Lemming& LemmingFactory::get_lemming()
 {
     const Point* p = new Point(0,0);
-    Automaton& aut = _spatial_model->create(*p);
+    Lemming& aut = _spatial_model->create(*p);
     return aut;
 }
