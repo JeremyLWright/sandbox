@@ -1,8 +1,10 @@
 #include <iostream>
 #include "LemmingFactory.h"
 #include <unistd.h>
+#include "main_view.h"
 using namespace SpatialDB;
 using namespace std;
+
 int main(void)
 {
     SpatialModel* y = SpatialModel::get_instance();
@@ -11,6 +13,7 @@ int main(void)
 
     Lemming& a = atf->get_lemming();
     cout << "Created Lemming: " << a.get_id() << endl;
+    main_view();
    for(int i = 0; ; i++)
     {
         sleep(1);

@@ -4,6 +4,8 @@ project(Spatialdb)
 
 find_package(GTest)
 find_package(Doxygen)
+find_package(SDL REQUIRED)
+find_package(SDL_image REQUIRED)
 
 include_directories(${GTEST_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
@@ -37,13 +39,14 @@ set(PROJECT_SOURCE_FILES
     models/SpatialModel.cpp
     models/RegionFactory.cpp
     models/Region.cpp
+    views/main_view.cpp
     )
     
 add_library(sqlite3 STATIC models/sqlite3.c)
 
 # Build the executable 
 add_executable(main main.cpp ${PROJECT_SOURCE_FILES})
-target_link_libraries(main sqlite3 pthread dl)
+target_link_libraries(main sqlite3 pthread dl ${SDL_LIBRARY} SDLmain SDL_gfx)
 
 if(GTEST_FOUND)
     add_custom_target(test
