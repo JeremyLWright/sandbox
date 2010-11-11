@@ -15,7 +15,9 @@ class LemmingTest: public testing::Test{
     Lemming* b;
 };
 
-
+/**
+ * @test Creates a Lemming and verifies it move around.
+ */
 TEST_F(LemmingTest, LemmingMovement)
 {
     Point p = a->get_location();

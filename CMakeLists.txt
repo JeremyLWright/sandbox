@@ -11,8 +11,8 @@ include_directories(${GTEST_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(sqlite3)
 include_directories(controllers)
-include_directories(models)
-include_directories(views)
+include_directories(Models)
+include_directories(RenderManager)
 #doxygen confg
 add_custom_target(doxygen
                     ${DOXYGEN_EXECUTABLE}
@@ -33,16 +33,16 @@ set(CMAKE_CXX_FLAGS "-O0 -pedantic -std=c++0x -Wall")
 set(CMAKE_CXX_FLAGS "-ggdb")
 set(CMAKE_C_FLAGS "-DSQLITE_ENABLE_RTREE=1 ")
 set(PROJECT_SOURCE_FILES
-    models/Point.cpp
-    models/Lemming.cpp
-    models/LemmingFactory.cpp
-    models/SpatialModel.cpp
-    models/RegionFactory.cpp
-    models/Region.cpp
-    views/main_view.cpp
+    Models/Point.cpp
+    Models/Lemming.cpp
+    Models/LemmingFactory.cpp
+    Models/SpatialModel.cpp
+    Models/RegionFactory.cpp
+    Models/Region.cpp
+    RenderManager/main_view.cpp
     )
     
-add_library(sqlite3 STATIC models/sqlite3.c)
+add_library(sqlite3 STATIC Models/sqlite3.c)
 
 # Build the executable 
 add_executable(main main.cpp ${PROJECT_SOURCE_FILES})
