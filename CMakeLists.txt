@@ -39,7 +39,7 @@ set(PROJECT_SOURCE_FILES
     Models/SpatialModel.cpp
     Models/RegionFactory.cpp
     Models/Region.cpp
-    RenderManager/main_view.cpp
+    RenderManager/RenderManager.cpp
     )
     
 add_library(sqlite3 STATIC Models/sqlite3.c)

@@ -1,7 +1,7 @@
 #include <iostream>
 #include "LemmingFactory.h"
 #include <unistd.h>
-#include "main_view.h"
+#include "RenderManager.h"
 using namespace SpatialDB;
 using namespace std;
 
@@ -13,14 +13,11 @@ int main(void)
 
     Lemming& a = atf->get_lemming();
     cout << "Created Lemming: " << a.get_id() << endl;
-    main_view();
-   for(int i = 0; ; i++)
-    {
-        sleep(1);
-         
-        cout << "Lemming at: " << (a.get_location()) << endl;
-        a.update_location(Point(0, i));
-        
+    RenderManager* r = new RenderManager();
+    while(1) {
+        if(r->close_requested == true)
+            break;
+        r->render_frame();
     }
     return 0;
 }

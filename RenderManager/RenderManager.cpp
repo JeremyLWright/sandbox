@@ -1,27 +1,30 @@
-#include <SDL/SDL.h>
-#include <SDL/SDL_gfxPrimitives.h>
+#include "RenderManager.h"
 
-const int WINDOWS_WIDTH = 640;
-const int WINDOWS_HEIGHT = 480;
-const char* WINDOW_TITLE = "Spatial Databases w/ SQLite3 Edition";
-
-int main_view()
+RenderManager::RenderManager()
+    : WINDOW_WIDTH(640), 
+      WINDOW_HEIGHT(480), 
+      WINDOW_TITLE("Spatial Databases w/ SQLite3 Edition")
 {
     SDL_Init(SDL_INIT_VIDEO);
 
-    SDL_Surface* screen = SDL_SetVideoMode(640, 480, 0, SDL_HWSURFACE | SDL_DOUBLEBUF);
-    SDL_WM_SetCaption("Umm", 0);
+    screen = SDL_SetVideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 0, SDL_HWSURFACE | SDL_DOUBLEBUF);
+    SDL_WM_SetCaption(WINDOW_TITLE, 0);
 
-    SDL_Event event;
-    bool dbRunning = true;
+    close_requested = false;
+   
+}
 
-    while(dbRunning)
-    {
+
+bool RenderManager::render_frame()
+{
+
         if(SDL_PollEvent(&event))
         {
             if(event.type == SDL_QUIT)
             {
-                dbRunning = false;
+                close_requested = true;
+                SDL_Quit();
+                return close_requested;
             }
         }
 
@@ -83,10 +86,7 @@ int main_view()
                 255, 0, 255, 155);
 
         SDL_Flip(screen);
+        return close_requested;
 
-
-    }
-    SDL_Quit();
-    return 0;
 }
 
