@@ -28,25 +28,25 @@ void move_lemmings()
             {
                 case UP:
                     if(p.Y <= 0)
-                        p.Y += MOVE_CONSTANT; //Move it DOWN instead
+                        p.Y = 10; // Set it on the edge
                     else
                         p.Y -= MOVE_CONSTANT;
                     break;
                 case DOWN:
                     if(p.Y >= 479)
-                        p.Y -= MOVE_CONSTANT; //Move it UP instead
+                        p.Y = 470; //Move it UP instead
                     else
                         p.Y += MOVE_CONSTANT;        
                     break;
                 case RIGHT:
                     if(p.X >= 630)
-                        p.X -= MOVE_CONSTANT; // Move it LEFT instead
+                        p.X = 630; // Move it LEFT instead
                     else
                         p.X += MOVE_CONSTANT;
                     break;
                 case LEFT:
                     if(p.X <= 0)
-                        p.X += MOVE_CONSTANT; //Move it RIGHT instead
+                        p.X = 10; //Move it RIGHT instead
                     else
                         p.X -= MOVE_CONSTANT;
                     break;
@@ -68,8 +68,17 @@ void create_lemmings(int count)
 
         Lemming& lemming = atf->get_lemming();
         lemming.update_location(p);
-        initial_x = (initial_x + 10 % 640);
-        initial_y = (initial_y + 10 % 480);
+        initial_x = (initial_x + 15);
+        if(initial_x >= 630)
+        {
+           initial_x = 0;
+           initial_y += 15;
+           if(initial_y >= 470)
+           {
+                initial_x = 0;
+                initial_y = 0;
+           }
+        }
         p.X = initial_x;
         p.Y = initial_y;
     }
@@ -78,7 +87,7 @@ void create_lemmings(int count)
 int main(void)
 {
     srand(time(NULL));
-    create_lemmings(100);
+    create_lemmings(1000);
     RenderManager* r = new RenderManager();
     while(1) {
         if(r->close_requested == true)
