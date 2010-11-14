@@ -7,6 +7,19 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_gfxPrimitives.h>
 
+class RGBColor {
+    public:
+    int Red;
+    int Green;
+    int Blue;
+};
+
+class HSVColor {
+    public:
+    float Hue;
+    float Saturation;
+    float Value;
+};
 
 class RenderManager {
     public:
@@ -22,6 +35,13 @@ class RenderManager {
     SDL_Surface* screen;
     SDL_Event event;
     SpatialDB::SpatialModel&  spatial_db;
+    sqlite3* database_connection;
+    const float GOLDEN_RATIO_CONJUGATE;
+    double modulus(double a, double b);
+    float hue;
+
+    RGBColor hsv_to_rgb(HSVColor hsv);
+    RGBColor get_color();
     
 };
 

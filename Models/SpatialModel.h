@@ -23,6 +23,7 @@ namespace SpatialDB {
             void update(Lemming& aut, const Point& point);
             Point select(Lemming& aut);
             void get_lemmings(std::list<Lemming>&);
+            sqlite3* get_database();
         protected:
             SpatialModel();
             char* query_create_lemming(int X, int Y);

@@ -74,6 +74,11 @@ SpatialModel* SpatialModel::get_instance()
     return _instance;
 }
 
+sqlite3* SpatialModel::get_database()
+{
+    return database_connection;
+}
+
 void SpatialModel::watch(const Region& region)
 {
 }
