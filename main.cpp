@@ -59,7 +59,7 @@ void create_lemmings(int count)
     Point p = Point(initial_x, initial_y);
     LemmingFactory* atf = new LemmingFactory();
     for(;count > 0; --count)
-    {;
+    {
 
         Lemming& lemming = atf->get_lemming();
         lemming.update_location(p);
