@@ -178,7 +178,7 @@ void SpatialModel::update(Lemming& aut, const Point& point)
 }
 
 
-const Point& SpatialModel::select(const Lemming& aut)
+Point SpatialModel::select(Lemming& aut)
 {
     char* query = new char[100];
     sprintf(query, "SELECT Loc_X, Loc_Y FROM Lemmings WHERE Id=%lu", aut.get_id());
@@ -195,7 +195,7 @@ const Point& SpatialModel::select(const Lemming& aut)
         {
             int x = sqlite3_column_int(select_statement, 0);
             int y = sqlite3_column_int(select_statement, 1);
-            const Point* p = new Point(x,y);
+            Point* p = new Point(x,y);
             sqlite3_finalize(select_statement);
             return *p;
         }
@@ -205,4 +205,27 @@ const Point& SpatialModel::select(const Lemming& aut)
 //TODO Fix this return statement.                    
 }
 
+void SpatialModel::get_lemmings(std::list<Lemming>& lemming_list)
+{
+    char* query = new char[200];
+    sprintf(query, "SELECT Id from Lemmings");
+    sqlite3_stmt* select_all_statement = 0;
+    int r = sqlite3_prepare(database_connection,
+                            query,
+                            -1,
+                            &select_all_statement,
+                            0);
+    if(r == SQLITE_OK)
+    {
+        do
+        {
+        r = sqlite3_step(select_all_statement);
+            Lemming* l = new Lemming(sqlite3_column_int(select_all_statement, 0), *this);
+            lemming_list.push_back(*l);
+        }while(r == SQLITE_ROW);
+        sqlite3_finalize(select_all_statement);
+
+    }
+    
+}
 

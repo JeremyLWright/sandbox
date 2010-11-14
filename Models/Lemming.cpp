@@ -13,7 +13,7 @@ void SpatialDB::Lemming::update_location(const Point& next_position)
     this->_spatial_model->update((*this), next_position);
 }
 
-const Point& SpatialDB::Lemming::get_location()
+Point SpatialDB::Lemming::get_location()
 {
     return this->_spatial_model->select(*this);
 }

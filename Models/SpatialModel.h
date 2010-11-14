@@ -21,7 +21,8 @@ namespace SpatialDB {
             Lemming& create(const Point& origin);
             std::list<Lemming>& select(const Point& point);
             void update(Lemming& aut, const Point& point);
-            const Point& select(const Lemming& aut);
+            Point select(Lemming& aut);
+            void get_lemmings(std::list<Lemming>&);
         protected:
             SpatialModel();
             char* query_create_lemming(int X, int Y);

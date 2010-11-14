@@ -8,7 +8,7 @@ namespace SpatialDB {
         public:
             Lemming(uint64_t id, SpatialModel& spatial_model);
             void update_location(const Point& next_position);
-            const Point& get_location();
+            Point get_location();
             uint64_t get_id() const;
             friend bool operator==(const Lemming& left, const Lemming& right);
         protected:
