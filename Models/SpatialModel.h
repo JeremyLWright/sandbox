@@ -8,6 +8,8 @@ extern "C" {
 #include "sqlite3.h"
 }
 using namespace std;
+
+extern int total_queries;
 namespace SpatialDB {
     class Region;
     class Lemming;

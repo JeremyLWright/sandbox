@@ -87,14 +87,24 @@ void create_lemmings(int count)
 int main(void)
 {
     srand(time(NULL));
-    create_lemmings(1000);
+    create_lemmings(500);
     RenderManager* r = new RenderManager();
+    int start_time = time(NULL);
+    int end_time;
+    int total_time;
     while(1) {
         if(r->close_requested == true)
             break;
         r->render_frame();
         move_lemmings();
         frame_counter++;
+        if(frame_counter % 10 == 0){
+            end_time = time(NULL);
+            total_time = end_time - start_time;
+            cout << (total_queries/total_time) << " Queries per second. [" << frame_counter << "]"<< endl;
+            start_time = time(NULL);
+            total_queries = 0;
+        }
 
     }
     return 0;

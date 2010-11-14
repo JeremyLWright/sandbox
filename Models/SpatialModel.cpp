@@ -9,7 +9,7 @@ using namespace std;
 using namespace SpatialDB;
 
 SpatialModel* SpatialModel::_instance = 0;
-
+int total_queries = 0;
 extern "C" {
     int create_table_callback(void* i, int j, char** k, char** l)
     {
@@ -60,11 +60,13 @@ SpatialModel::SpatialModel()
                     create_table_callback,
                     (void*)1,
                     &default_error_string);
+                    total_queries++;
     r = sqlite3_exec(   database_connection,
                         CREATE_TABLE_AUTOMATONS_QUERY,
                         create_table_callback,
                         (void*)1,
                         &default_error_string);
+                    total_queries++;
 }
 
 SpatialModel* SpatialModel::get_instance()
@@ -100,6 +102,7 @@ list<Lemming>& SpatialModel::select(const Region& region)
                             &select_statement,
                             0);
 
+                    total_queries++;
     delete query;
     if(r == SQLITE_OK)
     {
@@ -132,6 +135,7 @@ list<Lemming>& SpatialModel::select(const Region& region)
             if( r == SQLITE_ROW){
             Lemming* a = new Lemming(id, *this);
             l->push_back(*a);    
+                    total_queries++;
             }
         } while(r == SQLITE_ROW);
         sqlite3_finalize(stmt2);
@@ -151,6 +155,7 @@ const Region& SpatialModel::create(const Point& A, const Point& B, const Point& 
                     (void*)1,
                     &default_error_string);
     int y = sqlite3_last_insert_rowid(database_connection);
+                    total_queries++;
     Region* reg = new Region(y, *this);
     return *reg;
 }
@@ -163,6 +168,7 @@ Lemming& SpatialModel::create(const Point& origin)
                     (void*)1,
                     &default_error_string);
     int y = sqlite3_last_insert_rowid(database_connection);
+                    total_queries++;
     Lemming* aut = new Lemming(y, *this);
     return *aut;
 }
@@ -179,6 +185,7 @@ void SpatialModel::update(Lemming& aut, const Point& point)
     char* query = new char[100];
     sprintf(query, "UPDATE Lemmings SET Loc_X=%d ,Loc_Y=%d WHERE Id=%lu", point.X, point.Y, aut.get_id());
     int r = sqlite3_exec(database_connection, query, create_table_callback, (void*)1, &default_error_string);
+                    total_queries++;
 
 }
 
@@ -202,6 +209,7 @@ Point SpatialModel::select(Lemming& aut)
             int y = sqlite3_column_int(select_statement, 1);
             Point* p = new Point(x,y);
             sqlite3_finalize(select_statement);
+                    total_queries++;
             return *p;
         }
     }
@@ -227,6 +235,7 @@ void SpatialModel::get_lemmings(std::list<Lemming>& lemming_list)
         r = sqlite3_step(select_all_statement);
             Lemming* l = new Lemming(sqlite3_column_int(select_all_statement, 0), *this);
             lemming_list.push_back(*l);
+                    total_queries++;
         }while(r == SQLITE_ROW);
         sqlite3_finalize(select_all_statement);
 
