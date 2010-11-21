@@ -128,7 +128,7 @@ int main(void)
     /*Enable UART intruupts*/	    
     ConfigIntUART2(UART_RX_INT_DIS | UART_TX_INT_DIS);
     OpenUART2(UART_EN, UART_TX_ENABLE, 207);			//configure UART and enable it
-   
+   init_io();
      /*wait till data is transmitted and received*/    
     while(1)
 	{
@@ -143,6 +143,7 @@ int main(void)
   		}
 		else
 			i = 0; 
+        gpio_task();
 	}
         
 
