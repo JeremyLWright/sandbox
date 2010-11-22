@@ -8,6 +8,6 @@
 #define RESET_INPUT_N _RA3
 
 void init_io();
-void gpio_taks();
+unsigned char check_for_call();
 #endif
 

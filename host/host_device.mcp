@@ -36,8 +36,8 @@ file_000=no
 file_001=no
 file_002=no
 [FILE_INFO]
-file_000=uart.c
-file_001=gpio.c
+file_000=gpio.c
+file_001=main.c
 file_002=gpio.h
 [SUITE_INFO]
 suite_guid={479DDE59-4D56-455E-855E-FFF59A3DB57E}

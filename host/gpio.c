@@ -1,5 +1,4 @@
 #include "gpio.h"
-
 void init_io()
 {
    _TRISA0 = 1; //Phone Line
@@ -11,10 +10,7 @@ void init_io()
    RINGER_LED = 0;
 }
 
-void gpio_task()
+unsigned char check_for_call()
 {
-    if(RESET_INPUT_N == 0)
-        MISSED_CALL_LED = 1;
-    else
-        MISSED_CALL_LED = 0;
+    return (RESET_INPUT_N);
 }
