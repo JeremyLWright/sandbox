@@ -85,8 +85,8 @@ int main(void)
                 rx_data = U2RXREG;
                 if(rx_data != 0)
                     host_ringer_state = HOST_INIT;
-                //else /* This should be a timeout */
-                  //  host_ringer_state = HOST_SEND_MESSAGE;
+                else /* This should be a timeout */
+                    host_ringer_state = HOST_SEND_MESSAGE;
                 break;
             default:
                 host_ringer_state = HOST_INIT;
