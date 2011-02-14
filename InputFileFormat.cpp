@@ -1,11 +1,7 @@
 /** 
  * @file InputFileFormat.cpp
  * 
- * @brief 
- * 
- * @par 
- * C++ Practicum Solutions
- * Problem Set X, Problem Y 
+ * @brief C++ File Utilities Library
  * 
  * @par 
  * Copyright Jeremy Wright (c) 2011
