@@ -27,7 +27,9 @@ bool cpp_practicum::InputFile::next()
 	 * requested string.  Said another way:
 	 * if(find()'s index is outside the bounds of string)...
 	 */
-	if(line.find(ss.str()) != string::npos)
+
+	if(line.length() == _file_format.get_sentenial_value().length()+1 && // Add 1 to get the end line too.
+	   line.find(ss.str()) != string::npos)
 	{
 		return false;
 	}
