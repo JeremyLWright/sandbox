@@ -6,6 +6,8 @@
  * @par 
  * Copyright Jeremy Wright (c) 2011
  * Creative Commons Attribution-ShareAlike 3.0 Unported License.
+ * @addtogroup file_utils File Utilities
+ * @{
  */
 #ifndef INPUTFILEFORMAT_H_
 #define INPUTFILEFORMAT_H_
@@ -75,6 +77,6 @@ protected:
 };
 
 }
-
+/** @} */
 #endif /* INPUTFILEFORMAT_H_ */
 

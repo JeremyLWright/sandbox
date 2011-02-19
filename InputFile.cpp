@@ -1,3 +1,14 @@
+/**
+ * @file InputFile.cpp
+ *
+ * @brief C++ File Utilities Library
+ *
+ * @par
+ * Copyright Jeremy Wright (c) 2011
+ * Creative Commons Attribution-ShareAlike 3.0 Unported License.
+ * @addtogroup file_utils File Utilities
+ * @{
+ */
 #include "InputFile.h"
 #include <algorithm>
 #include <iterator>
@@ -65,4 +76,4 @@ vector<string> cpp_practicum::InputFile::tokenize(string line)
 cpp_practicum::InputFile::~InputFile(void)
 {
 }
-
+/** @} */
