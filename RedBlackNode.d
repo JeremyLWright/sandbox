@@ -5,9 +5,9 @@
  * Creative Commons Attribution-ShareAlike 3.0 Unported License.
  */
 
+enum Colors { RED, BLACK };
 class RedBlackNode {
     public:
-    enum Colors { RED, BLACK };
     this(int Key)
     {
         key = Key;
@@ -20,7 +20,6 @@ class RedBlackNode {
     {
         auto root = new RedBlackNode(7);
         auto nil = new RedBlackNode(0);
-
         root.Left = new RedBlackNode(6);
         root.Right = new RedBlackNode(8);
         root.Left.Parent = root;
