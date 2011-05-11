@@ -5,7 +5,7 @@ DOCDIR=doc
 DFLAGS=-unittest -g -d
 #DFLAGS=-unittest -cov -g -d
 
-SRCS=main.d
+SRCS=main.d RedBlackNode.d
 
 all: red_black_tree
 

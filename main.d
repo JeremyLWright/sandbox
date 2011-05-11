@@ -3,6 +3,7 @@
  * Version: Something Awesome
  */
 import std.stdio;
+import RedBlackNode;
 
 char flags[8191];
 /** 
@@ -11,6 +12,8 @@ char flags[8191];
  */
 int main()
 {   int     i, prime, k, count, iter;
+
+    auto t = new RedBlackNode(9);
 version(D_Coverage) {}
 else { writefln("10 iterations"); }
     for (iter = 1; iter <= 10; iter++)
