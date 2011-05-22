@@ -7,7 +7,6 @@
 
 import std.stdio;
 import std.algorithm;
-import BucketSort;
 import std.stream;
 import std.exception;
 import std.conv;
@@ -51,7 +50,7 @@ int main(string[] argv)
 {
     enforce(argv.length == 2, "Usage: ./main <filename>");
     Stream f = new BufferedFile(argv[1]);
-    OutputStream g = new BufferedFile("timed.dat", FileMode.OutNew);
+    OutputStream g = new BufferedFile("single_threaded.dat", FileMode.OutNew);
     scope(exit) { g.close();}
     
     auto threads = 1;
@@ -64,20 +63,24 @@ int main(string[] argv)
     }
     f.close();
 
-    StopWatch sw;
-    double[] times;
-    TickDuration last = TickDuration.from!"seconds"(0);
-    foreach(unused; 0..5)
+    for(int num_buckets = 500; num_buckets < 10000; num_buckets += 500)
     {
-        sw.start();
-        sort_data = bucket_sort(sort_data, buckets, threads);
-        sw.stop();
-        times ~= (sw.peek()-last).msecs;
-        last = sw.peek();
-        enforce(isSorted(sort_data));
-    }
+        StopWatch sw;
+        double[] times;
+        TickDuration last = TickDuration.from!"seconds"(0);
+        foreach(unused; 0..5)
+        {
+            sw.start();
+            sort_data = bucket_sort(sort_data, num_buckets, threads);
+            sw.stop();
+            times ~= (sw.peek()-last).msecs;
+            last = sw.peek();
+            enforce(isSorted(sort_data));
+        }
 
-    g.writef("%d %d %f %f %f", buckets, threads, avg(times), minPos!("a > b")(times)[0], minPos(times)[0]);//Buckets, threads, avg time, max time, min time
+        g.writef("%d %d %f %f %f\n", num_buckets, threads, avg(times), minPos!("a > b")(times)[0], minPos(times)[0]);//Buckets, threads, avg time, max time, min time
+        g.flush();
+    }
     return 0;
 }
 
