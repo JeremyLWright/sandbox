@@ -14,16 +14,16 @@ import std.math;
 import std.array;
 import std.datetime;
 import std.numeric;
+import std.container;
 
 uint[] bucket_sort(uint[] unsorted_data, immutable uint num_buckets, immutable uint threads)
 {
-    immutable auto interval = (pow(2,31)/num_buckets)+1;
-    uint[][] buckets;
-    buckets.length = num_buckets;
+    immutable auto interval = (minPos!("a > b")(unsorted_data)[0]/num_buckets)+1;
+    auto buckets = new uint[][num_buckets];
 
     foreach(uint datum; unsorted_data)
     {
-        scope(failure) { writefln("%d %d %d", datum, interval, buckets.length);}
+        scope(failure) { writefln("%d %d %d", datum, interval, num_buckets);}
         buckets[datum/(interval)] ~= datum;
     }
 
@@ -32,8 +32,6 @@ uint[] bucket_sort(uint[] unsorted_data, immutable uint num_buckets, immutable u
     {
         s ~= bucket.sort;
     }
-
-
     return s;
 }
 
@@ -48,13 +46,13 @@ double avg(in double[] a)
 
 int main(string[] argv)
 {
-    enforce(argv.length == 2, "Usage: ./main <filename>");
+    enforce(argv.length == 5, "Usage: ./main <filename> <threads> <buckets> <output_file>");
     Stream f = new BufferedFile(argv[1]);
-    OutputStream g = new BufferedFile("single_threaded.dat", FileMode.OutNew);
+    OutputStream g = new BufferedFile(argv[4], FileMode.Append);
     scope(exit) { g.close();}
     
-    auto threads = 1;
-    auto buckets = 5000;
+    auto threads = to!(uint)(argv[2]);
+    auto buckets = to!(uint)(argv[3]);
     uint[] sort_data;
     uint temp_uint;
     while(f.readf(&temp_uint))
@@ -63,24 +61,22 @@ int main(string[] argv)
     }
     f.close();
 
-    for(int num_buckets = 500; num_buckets < 10000; num_buckets += 500)
+    StopWatch sw;
+    double[] times;
+    TickDuration last = TickDuration.from!"seconds"(0);
+    foreach(unused; 0..5)
     {
-        StopWatch sw;
-        double[] times;
-        TickDuration last = TickDuration.from!"seconds"(0);
-        foreach(unused; 0..5)
-        {
-            sw.start();
-            sort_data = bucket_sort(sort_data, num_buckets, threads);
-            sw.stop();
-            times ~= (sw.peek()-last).msecs;
-            last = sw.peek();
-            enforce(isSorted(sort_data));
-        }
-
-        g.writef("%d %d %f %f %f\n", num_buckets, threads, avg(times), minPos!("a > b")(times)[0], minPos(times)[0]);//Buckets, threads, avg time, max time, min time
-        g.flush();
+        sw.start();
+        sort_data = bucket_sort(sort_data, buckets, threads);
+        sw.stop();
+        times ~= (sw.peek()-last).msecs;
+        last = sw.peek();
+        enforce(isSorted(sort_data));
     }
+
+    g.writef("%d %d %f %f %f\n", buckets, threads, avg(times), minPos!("a > b")(times)[0], minPos(times)[0]);//Buckets, threads, avg time, max time, min time
+    g.flush();
+    
     return 0;
 }
 
