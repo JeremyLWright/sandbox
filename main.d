@@ -4,7 +4,7 @@
  * License: Copyright Jeremy Wright (c) 2011
  * Creative Commons Attribution-ShareAlike 3.0 Unported License.
  */    
-
+import std.typecons;
 import std.stdio;
 import std.algorithm;
 import std.stream;
@@ -44,6 +44,14 @@ double avg(in double[] a)
     return result / a.length;
 }
 
+double stddev(in double[] a)
+{
+    auto r = reduce!("a + b", "a + b * b")(tuple(0.0, 0.0), a);
+    auto avg = r[0] / a.length;
+    auto stdev = sqrt(r[1] / a.length - avg * avg);
+    return stdev;
+}
+
 int main(string[] argv)
 {
     enforce(argv.length == 5, "Usage: ./main <filename> <threads> <buckets> <output_file>");
@@ -64,7 +72,7 @@ int main(string[] argv)
     StopWatch sw;
     double[] times;
     TickDuration last = TickDuration.from!"seconds"(0);
-    foreach(unused; 0..5)
+    foreach(unused; 0..10)
     {
         sw.start();
         sort_data = bucket_sort(sort_data, buckets, threads);
@@ -73,8 +81,8 @@ int main(string[] argv)
         last = sw.peek();
         enforce(isSorted(sort_data));
     }
-
-    g.writef("%d %d %f %f %f\n", buckets, threads, avg(times), minPos!("a > b")(times)[0], minPos(times)[0]);//Buckets, threads, avg time, max time, min time
+    
+    g.writef("%d %d %f %f %f %f\n", buckets, threads, avg(times), minPos!("a > b")(times)[0], minPos(times)[0], stddev(times));//Buckets, threads, avg time, max time, min time
     g.flush();
     
     return 0;
