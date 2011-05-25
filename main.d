@@ -15,6 +15,7 @@ import std.array;
 import std.datetime;
 import std.numeric;
 import std.container;
+import std.parallelism;
 
 uint[] bucket_sort(uint[] unsorted_data, immutable uint num_buckets, immutable uint threads)
 {
@@ -28,9 +29,14 @@ uint[] bucket_sort(uint[] unsorted_data, immutable uint num_buckets, immutable u
     }
 
     uint[] s;
+    foreach(ref bucket; taskPool.parallel(buckets))
+    {
+        bucket.sort;
+    }
+
     foreach(uint[] bucket; buckets)
     {
-        s ~= bucket.sort;
+        s ~= bucket;
     }
     return s;
 }
