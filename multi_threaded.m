@@ -23,45 +23,52 @@ m_optimal_string = sprintf('MT Optimal Setting (%d, %d)', m_best_bucket, m_best_
 
 
 optimal_string = sprintf('Optimal Setting (%d, %d)', best_bucket, best_time);
-%Plot Straight Plots
-plot(best_bucket, best_time, "@31")
-hold on;
-plot(buckets, time);
-title("Single Threaded Bucket Sort");
-xlabel("# of Buckets");
-ylabel("Time (ms)");
+%Plot all data. 
+plot(buckets, time, m_buckets, m_time, best_bucket, best_time, '@', m_best_bucket, m_best_time, 'o');
+legend('Single-Threaded', 'Multi-Threaded', 'ST Optimal', 'MT Optimal');
+
+title('Bucket Sort');
+xlabel('# of Buckets');
+ylabel('Time (ms)');
+print -dpng 'straight_threaded.png';
+
+%Plot Single Data
+subplot(2, 1, 1);
+plot(best_bucket, best_time, '@', buckets, time)
 text(best_bucket-100, best_time - 100, optimal_string);
-print -dpng "straight_single_threaded.png";
-
-%Plot Straight Plots
-plot(m_best_bucket, m_best_time, "@31")
-plot(m_buckets, m_time);
-title("Bucket Sort");
-xlabel("# of Buckets");
-ylabel("Time (ms)");
-text(m_best_bucket-100, m_best_time - 100, m_optimal_string);
-print -dpng "straight_multi_threaded.png";
-
-
-hold off;
-
-% Plot the log plots
-semilogx(best_bucket, best_time, "@31")
+title('Single-Threaded Bucket Sort');
+xlabel('# of Buckets');
+ylabel('Time (ms)');
+%Std-Dev plot
+subplot(2,1, 2);
+plot(buckets, time, buckets, maxs, buckets, mins);
+legend('Standard Deviation', 'Max Runtimes', 'Min Runtimes');
 hold on;
-semilogx(buckets, time);
-title("Single Threaded Bucket Sort");
-xlabel("# of Buckets");
-ylabel("Time (ms)");
-text(best_bucket-100, best_time - 100, optimal_string);
-print -dpng "log_single_threaded.png";
+errorbar(buckets, time, stdv/2);
+title('Single-Threaded Standard Deviation');
+xlabel('# of Buckets');
+ylabel('Time (ms)');
+hold off
 
+print -dpng 'straight_single_threaded.png';
 
-% Plot the log plots
-semilogx(m_best_bucket, m_best_time, "@31")
+%Plot Multi Data
+subplot(2,2, [1 2]);
+plot(m_best_bucket, m_best_time, '@', m_buckets, m_time)
+text(m_best_bucket+10, m_best_time + 10, m_optimal_string);
+title('Multi-Threaded Bucket Sort');
+xlabel('# of Buckets');
+ylabel('Time (ms)');
+
+%% Std-dev plot
+subplot(2,2, [3 4]);
+plot(m_buckets, m_time, m_buckets, m_maxs, m_buckets, m_mins);
+legend('Standard Deviation', 'Max Runtimes', 'Min Runtimes');
 hold on;
-semilogx(m_buckets, m_time);
-title("Threaded Bucket Sort");
-xlabel("# of Buckets");
-ylabel("Time (ms)");
-text(m_best_bucket-100, m_best_time - 100, m_optimal_string);
-print -dpng "log_multi_threaded.png";
+errorbar(m_buckets, m_time, m_stdv/2);
+title('Multi-Threaded Standard Deviation');
+xlabel('# of Buckets');
+ylabel('Time (ms)');
+%% Range Plot
+print -dpng 'straight_multi_threaded.png';
+hold off

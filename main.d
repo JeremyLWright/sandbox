@@ -29,14 +29,24 @@ uint[] bucket_sort(uint[] unsorted_data, immutable uint num_buckets, immutable u
     }
 
     uint[] s;
-    foreach(ref bucket; taskPool.parallel(buckets))
+    if(threads > 1)
     {
-        bucket.sort;
-    }
+        foreach(ref bucket; taskPool.parallel(buckets))
+        {
+            bucket.sort;
+        }
 
-    foreach(uint[] bucket; buckets)
+        foreach(uint[] bucket; buckets)
+        {
+            s ~= bucket;
+        }
+    }
+    else 
     {
-        s ~= bucket;
+        foreach(uint[] bucket; buckets)
+        {
+            s ~= bucket.sort;
+        }
     }
     return s;
 }
@@ -52,10 +62,14 @@ double avg(in double[] a)
 
 double stddev(in double[] a)
 {
-    auto r = reduce!("a + b", "a + b * b")(tuple(0.0, 0.0), a);
-    auto avg = r[0] / a.length;
-    auto stdev = sqrt(r[1] / a.length - avg * avg);
-    return stdev;
+    double sum = 0;
+    double mean = avg(a);
+
+    foreach(i; a)
+    {
+        sum += pow(i-mean, 2);
+    }
+    return sqrt(sum/a.length);
 }
 
 int main(string[] argv)
@@ -88,7 +102,12 @@ int main(string[] argv)
         enforce(isSorted(sort_data));
     }
     
-    g.writef("%d %d %f %f %f %f\n", buckets, threads, avg(times), minPos!("a > b")(times)[0], minPos(times)[0], stddev(times));//Buckets, threads, avg time, max time, min time
+    g.writef("%d %d ", buckets, threads);//Buckets, threads, avg time, max time, min time
+    foreach(time; times)
+    {
+        g.writef("%f ", time);
+    }
+    g.writef("\n");
     g.flush();
     
     return 0;
