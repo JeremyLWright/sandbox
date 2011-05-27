@@ -1,6 +1,6 @@
 #!/bin/bash
 rm multi_threaded.dat
-for t in {100..500..100}
+for t in {100..10000..100}
 do
-    ./main random_list.dat 10 $t multi_threaded.dat
+    ./mbucket_sort random_list.dat $t multi_threaded.dat
 done

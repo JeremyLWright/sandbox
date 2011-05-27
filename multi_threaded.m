@@ -1,60 +1,62 @@
 load single_threaded.dat
 
-mins = single_threaded(:,5);
-maxs = single_threaded(:,4);
-stdv = single_threaded(:,6);
-time = single_threaded(:,3);
-buckets = single_threaded(:,1);
-best_time = min(time);
-best_bucket = buckets(find(time == min(time)));
-
+time = single_threaded(:,2:end);
+stime_stats = statistics(time')';
+s_avg_time = stime_stats(:,6);
+s_buckets = single_threaded(:,1);
+s_mins = stime_stats(:,1);
+s_maxs = stime_stats(:,5);
+s_q1 = stime_stats(:,2);
+s_med = stime_stats(:,3);
+s_q3 = stime_stats(:,4);
+s_best_time = min(s_avg_time);
+s_best_bucket = s_buckets(find(s_avg_time == min(s_avg_time)));
 
 load multi_threaded.dat
 
-m_mins = multi_threaded(:,5);
-m_maxs = multi_threaded(:,4);
-m_stdv = multi_threaded(:,6);
-m_time = multi_threaded(:,3);
+m_time = multi_threaded(:,3:end);
+time_stats = statistics(m_time')';
+m_avg_time = time_stats(:, 6);
 m_buckets = multi_threaded(:,1);
-m_best_time = min(m_time);
-m_best_bucket = buckets(find(m_time == min(m_time)));
+m_mins = time_stats(:,1);
+m_maxs = time_stats(:,5);
+m_q1 = time_stats(:,2);
+m_med = time_stats(:,3);
+m_q3 = time_stats(:,4);
+m_best_time = min(m_avg_time);
+m_best_bucket = m_buckets(find(m_avg_time == min(m_avg_time)));
 
 m_optimal_string = sprintf('MT Optimal Setting (%d, %d)', m_best_bucket, m_best_time);
+m_worst_string = sprintf('Worst Runtime: %g', max(m_maxs));
+s_worst_string = sprintf('Worst Runtime: %g', max(s_maxs));
+s_optimal_string = sprintf('Optimal Setting (%d, %d)', s_best_bucket, s_best_time);
 
-
-optimal_string = sprintf('Optimal Setting (%d, %d)', best_bucket, best_time);
-%Plot all data. 
-plot(buckets, time, m_buckets, m_time, best_bucket, best_time, '@', m_best_bucket, m_best_time, 'o');
-legend('Single-Threaded', 'Multi-Threaded', 'ST Optimal', 'MT Optimal');
-
-title('Bucket Sort');
-xlabel('# of Buckets');
-ylabel('Time (ms)');
-print -dpng 'straight_threaded.png';
-
-%Plot Single Data
-subplot(2, 1, 1);
-plot(best_bucket, best_time, '@', buckets, time)
-text(best_bucket-100, best_time - 100, optimal_string);
+subplot(2,2, [1 2]);
+plot(s_best_bucket, s_best_time, '@', s_buckets, s_avg_time);
+text(s_best_bucket-2500, s_best_time+100, s_optimal_string);
 title('Single-Threaded Bucket Sort');
 xlabel('# of Buckets');
 ylabel('Time (ms)');
-%Std-Dev plot
-subplot(2,1, 2);
-plot(buckets, time, buckets, maxs, buckets, mins);
-legend('Standard Deviation', 'Max Runtimes', 'Min Runtimes');
-hold on;
-errorbar(buckets, time, stdv/2);
+
+subplot(2,2,[3 4]);
+errorbar(s_buckets, s_med, s_med-s_q1, s_q3-s_med);
+axis_x_min = min(s_buckets);
+axis_x_max = max(s_buckets);
+axis_y_min = min(s_q1)-min(s_q1)*.1;
+axis_y_max = max(s_q3)+max(s_q3)*.1;
+axis([axis_x_min axis_x_max axis_y_min axis_y_max]);
+text(axis_y_max-axis_y_max*.05, axis_x_min+axis_x_min*.05, m_worst_string );
 title('Single-Threaded Standard Deviation');
 xlabel('# of Buckets');
 ylabel('Time (ms)');
+%% Range Plot
+print -dpng 'single_threaded.png';
 hold off
 
-print -dpng 'straight_single_threaded.png';
 
 %Plot Multi Data
 subplot(2,2, [1 2]);
-plot(m_best_bucket, m_best_time, '@', m_buckets, m_time)
+plot(m_best_bucket, m_best_time, '@', m_buckets, m_avg_time)
 text(m_best_bucket+10, m_best_time + 10, m_optimal_string);
 title('Multi-Threaded Bucket Sort');
 xlabel('# of Buckets');
@@ -62,13 +64,16 @@ ylabel('Time (ms)');
 
 %% Std-dev plot
 subplot(2,2, [3 4]);
-plot(m_buckets, m_time, m_buckets, m_maxs, m_buckets, m_mins);
-legend('Standard Deviation', 'Max Runtimes', 'Min Runtimes');
-hold on;
-errorbar(m_buckets, m_time, m_stdv/2);
+errorbar(m_buckets, m_med, m_med-m_q1, m_q3-m_med);
+axis_x_min = min(m_buckets);
+axis_x_max = max(m_buckets);
+axis_y_min = min(m_q1)-min(m_q1)*.1;
+axis_y_max = max(m_q3)+max(m_q3)*.1;
+axis([axis_x_min axis_x_max axis_y_min axis_y_max]);
+text(axis_y_max-axis_y_max*.05, axis_x_min+axis_x_min*.05, m_worst_string );
 title('Multi-Threaded Standard Deviation');
 xlabel('# of Buckets');
 ylabel('Time (ms)');
 %% Range Plot
-print -dpng 'straight_multi_threaded.png';
+print -dpng 'multi_threaded.png';
 hold off

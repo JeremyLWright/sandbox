@@ -17,7 +17,7 @@ import std.numeric;
 import std.container;
 import std.parallelism;
 
-uint[] bucket_sort(uint[] unsorted_data, immutable uint num_buckets, immutable uint threads)
+uint[] bucket_sort(uint[] unsorted_data, immutable uint num_buckets)
 {
     immutable auto interval = (minPos!("a > b")(unsorted_data)[0]/num_buckets)+1;
     auto buckets = new uint[][num_buckets];
@@ -29,58 +29,37 @@ uint[] bucket_sort(uint[] unsorted_data, immutable uint num_buckets, immutable u
     }
 
     uint[] s;
-    if(threads > 1)
+    version(MultiThreaded)
     {
         foreach(ref bucket; taskPool.parallel(buckets))
         {
             bucket.sort;
         }
 
-        foreach(uint[] bucket; buckets)
-        {
-            s ~= bucket;
-        }
     }
     else 
     {
         foreach(uint[] bucket; buckets)
         {
-            s ~= bucket.sort;
+            bucket.sort;
         }
+    }
+    
+    foreach(uint[] bucket; buckets)
+    {
+        s ~= bucket;
     }
     return s;
 }
 
-// Average numbers in an array
-double avg(in double[] a)
-{
-    if (a.length == 0) return 0;
-    FPTemporary!double result = 0;
-    foreach (e; a) result += e;
-    return result / a.length;
-}
-
-double stddev(in double[] a)
-{
-    double sum = 0;
-    double mean = avg(a);
-
-    foreach(i; a)
-    {
-        sum += pow(i-mean, 2);
-    }
-    return sqrt(sum/a.length);
-}
-
 int main(string[] argv)
 {
-    enforce(argv.length == 5, "Usage: ./main <filename> <threads> <buckets> <output_file>");
+    enforce(argv.length == 4, "Usage: ./main <filename> <buckets> <output_file>");
     Stream f = new BufferedFile(argv[1]);
-    OutputStream g = new BufferedFile(argv[4], FileMode.Append);
+    OutputStream g = new BufferedFile(argv[3], FileMode.Append);
     scope(exit) { g.close();}
     
-    auto threads = to!(uint)(argv[2]);
-    auto buckets = to!(uint)(argv[3]);
+    auto buckets = to!(uint)(argv[2]);
     uint[] sort_data;
     uint temp_uint;
     while(f.readf(&temp_uint))
@@ -95,14 +74,14 @@ int main(string[] argv)
     foreach(unused; 0..10)
     {
         sw.start();
-        sort_data = bucket_sort(sort_data, buckets, threads);
+        sort_data = bucket_sort(sort_data, buckets);
         sw.stop();
         times ~= (sw.peek()-last).msecs;
         last = sw.peek();
         enforce(isSorted(sort_data));
     }
     
-    g.writef("%d %d ", buckets, threads);//Buckets, threads, avg time, max time, min time
+    g.writef("%d ", buckets);//Bucket
     foreach(time; times)
     {
         g.writef("%f ", time);
