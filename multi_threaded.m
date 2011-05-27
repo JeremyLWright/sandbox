@@ -1,6 +1,6 @@
 load single_threaded.dat
 
-time = single_threaded(:,2:end);
+time = single_threaded(:,3:end);
 stime_stats = statistics(time')';
 s_avg_time = stime_stats(:,6);
 s_buckets = single_threaded(:,1);
@@ -77,3 +77,12 @@ ylabel('Time (ms)');
 %% Range Plot
 print -dpng 'multi_threaded.png';
 hold off
+
+clf();
+plot(m_buckets, m_avg_time, s_buckets, s_avg_time);
+legend('Multi-Threaded', 'Single Threaded');
+title('Threading Compared');
+xlabel('# of Buckets');
+ylabel('Time (ms)');
+print -dpng 'threading_compared.png';
+
