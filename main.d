@@ -54,12 +54,11 @@ uint[] bucket_sort(uint[] unsorted_data, immutable uint num_buckets)
 
 int main(string[] argv)
 {
-    enforce(argv.length == 4, "Usage: ./main <filename> <buckets> <output_file>");
+    enforce(argv.length == 3, "Usage: ./main <filename> <output_file>");
     Stream f = new BufferedFile(argv[1]);
-    OutputStream g = new BufferedFile(argv[3], FileMode.Append);
+    OutputStream g = new BufferedFile(argv[2], FileMode.OutNew);
     scope(exit) { g.close();}
     
-    auto buckets = to!(uint)(argv[2]);
     uint[] sort_data;
     uint temp_uint;
     while(f.readf(&temp_uint))
@@ -67,28 +66,28 @@ int main(string[] argv)
         sort_data ~= temp_uint;
     }
     f.close();
+    for(auto buckets = 100; buckets <= 50000; buckets+=100){
+        StopWatch sw;
+        double[] times;
+        TickDuration last = TickDuration.from!"seconds"(0);
+        foreach(unused; 0..5)
+        {
+            sw.start();
+            sort_data = bucket_sort(sort_data, buckets);
+            sw.stop();
+            times ~= (sw.peek()-last).msecs;
+            last = sw.peek();
+            enforce(isSorted(sort_data));
+        }
 
-    StopWatch sw;
-    double[] times;
-    TickDuration last = TickDuration.from!"seconds"(0);
-    foreach(unused; 0..10)
-    {
-        sw.start();
-        sort_data = bucket_sort(sort_data, buckets);
-        sw.stop();
-        times ~= (sw.peek()-last).msecs;
-        last = sw.peek();
-        enforce(isSorted(sort_data));
+        g.writef("%d ", buckets);//Bucket
+        foreach(time; times)
+        {
+            g.writef("%f ", time);
+        }
+        g.writef("\n");
+        g.flush();
     }
-    
-    g.writef("%d ", buckets);//Bucket
-    foreach(time; times)
-    {
-        g.writef("%f ", time);
-    }
-    g.writef("\n");
-    g.flush();
-    
     return 0;
 }
 

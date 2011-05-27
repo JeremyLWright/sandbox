@@ -1,7 +1,7 @@
 DMD=dmd
 DOCDIR=doc
 
-DFLAGS=-O -release -inline -nofloat -w -d -Isrc -Iimport
+DFLAGS=-O -release -w -d 
 #DFLAGS=-unittest -g -d
 #DFLAGS=-unittest -cov -g -d
 
