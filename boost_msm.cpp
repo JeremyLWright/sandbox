@@ -12,30 +12,38 @@ namespace mpl = boost::mpl;
 using namespace boost::msm::front;
 using std::cout;
 using std::endl;
+
+//#define DEBUG
+
 namespace
 {
     // events
     struct SystemTick 
     {
-            template <class EVT,class FSM,class SourceState,class TargetState>
-            void operator()(EVT const& ,FSM& ,SourceState& ,TargetState& )
+            SystemTick():
+                _ticks{0}
             {
-                cout << "\tSystem Tick" << endl;
             }
-
-            void hit_ticks()
+            
+            int hit_ticks()
             {
-                ++_ticks;
+#ifdef DEBUG
+                cout << "\tHit Tick." << endl;
+#endif
+                return ++_ticks;
             }
             
             void reset_ticks()
             {
+               // cout << "Reset Ticks." << endl;
                 _ticks = 0;
             }
 
             int _ticks;
     };
-
+    
+    SystemTick g_tick;
+    int eaten_sandwiches = 0;
 
     // front-end: define the FSM structure 
     struct my_machine_ : public msm::front::state_machine_def<my_machine_>
@@ -45,93 +53,201 @@ namespace
         {
             // every (optional) entry/exit methods get the event passed.
             template <class Event,class FSM>
-            void on_entry(Event const&,FSM& ) {std::cout << "entering: RemoveBread" << std::endl;}
+            void on_entry(Event const&,FSM& ) 
+            {
+#ifdef DEBUG
+                std::cout << "entering: RemoveBread" << std::endl;
+#endif
+                while(g_tick.hit_ticks() < 5);
+            }
             template <class Event,class FSM>
-            void on_exit(Event const&,FSM& ) {std::cout << "leaving: RemoveBread" << std::endl;}
+            void on_exit(Event const&,FSM& ) 
+            {
+#ifdef DEBUG 
+                std::cout << "leaving: RemoveBread" << std::endl;
+#endif
+            }
         };
         struct SpreadPB : public msm::front::state<> 
         { 
             template <class Event,class FSM>
-            void on_entry(Event const& ,FSM&) {std::cout << "entering: SpreadPB" << std::endl;}
+            void on_entry(Event const& ,FSM&) 
+            {
+#ifdef DEBUG
+                std::cout << "entering: SpreadPB" << std::endl;
+#endif
+                while(g_tick.hit_ticks() < 2);
+            }
             template <class Event,class FSM>
-            void on_exit(Event const&,FSM& ) {std::cout << "leaving: SpreadPB" << std::endl;}
+            void on_exit(Event const&,FSM& ) 
+            {
+#ifdef DEBUG
+                std::cout << "leaving: SpreadPB" << std::endl;
+#endif
+            }
         };
 
         struct SpreadJam : public msm::front::state<> 
         { 
             // when stopped, the CD is loaded
             template <class Event,class FSM>
-            void on_entry(Event const& ,FSM&) {std::cout << "entering: SpreadJam" << std::endl;}
+            void on_entry(Event const& ,FSM&) 
+            {
+#ifdef DEBUG
+                std::cout << "entering: SpreadJam" << std::endl;
+#endif
+                while(g_tick.hit_ticks() < 2);
+            }
             template <class Event,class FSM>
-            void on_exit(Event const&,FSM& ) {std::cout << "leaving: SpreadJam" << std::endl;}
+            void on_exit(Event const&,FSM& ) 
+            {
+#ifdef DEBUG
+                std::cout << "leaving: SpreadJam" << std::endl;
+#endif
+            }
         };
 
         struct PutHalvesTogether : public msm::front::state<>
         {
             template <class Event,class FSM>
-            void on_entry(Event const&,FSM& ) {std::cout << "entering: PutHalvesTogether" << std::endl;}
+            void on_entry(Event const&,FSM& ) 
+            {
+#ifdef DEBUG
+                std::cout << "entering: PutHalvesTogether" << std::endl;
+#endif
+                while(g_tick.hit_ticks() < 2);
+            }
             template <class Event,class FSM>
-            void on_exit(Event const&,FSM& ) {std::cout << "leaving: PutHalvesTogether" << std::endl;}
+            void on_exit(Event const&,FSM& ) 
+            {
+#ifdef DEBUG
+                std::cout << "leaving: PutHalvesTogether" << std::endl;
+#endif
+            }
         };
 
+        struct EatSandwich : public msm::front::state<>
+        {
+            template <class Event,class FSM>
+            void on_entry(Event const&,FSM& ) 
+            {
+#ifdef DEBUG
+                std::cout << "entering: Eating Sandwich" << std::endl;
+#endif
+                while(g_tick.hit_ticks() < 10);
+            }
+            template <class Event,class FSM>
+            void on_exit(Event const&,FSM& ) 
+            {
+                ++eaten_sandwiches;
+#ifdef DEBUG
+                std::cout << "leaving: Eating Sandwich" << std::endl;
+#endif
+            }
+        };
+
+        struct GoToWork : public msm::front::state<>
+        {
+            template <class Event,class FSM>
+            void on_entry(Event const&,FSM& ) 
+            {
+#ifdef DEBUG
+                std::cout << "entering: Going To Work" << std::endl;
+#endif
+                while(g_tick.hit_ticks() < 20);
+            }
+            template <class Event,class FSM>
+            void on_exit(Event const&,FSM& ) 
+            {
+#ifdef DEBUG
+                std::cout << "leaving: Going To Work" << std::endl;
+#endif
+            }
+        };
+        struct Done : public msm::front::state<>
+        {
+            template <class Event,class FSM>
+            void on_entry(Event const&,FSM& ) 
+            {
+#ifdef DEBUG
+                std::cout << "entering: Done" << std::endl;
+#endif
+            }
+            template <class Event,class FSM>
+            void on_exit(Event const&,FSM& ) 
+            {
+#ifdef DEBUG
+                std::cout << "leaving: Done" << std::endl;
+#endif
+            }
+        };
         // the initial state of the player SM. Must be defined
         typedef RemoveBread initial_state;
 
         // transition actions
-        struct SpreadPBToSpreadJam 
+        struct ResetTick
         {
             template <class EVT,class FSM,class SourceState,class TargetState>
             void operator()(EVT const& ,FSM& ,SourceState& ,TargetState& )
             {
-                std::cout << "my_machine::SpreadPBToSpreadJam" << std::endl;
+                g_tick.reset_ticks();
             }
         };
-        struct SpreadJamToPutHalvesTogether 
+
+        struct ResetSandwich
         {
             template <class EVT,class FSM,class SourceState,class TargetState>
             void operator()(EVT const& ,FSM& ,SourceState& ,TargetState& )
             {
-                std::cout << "my_machine::SpreadJamToPutHalvesTogether" << std::endl;
+                eaten_sandwiches = 0;
+                ResetTick();
             }
         };
+
+        
         // guard conditions
-        struct always_true 
+        struct user_is_full 
         {
             template <class EVT,class FSM,class SourceState,class TargetState>
             bool operator()(EVT const& evt,FSM& fsm,SourceState& src,TargetState& tgt)
             {
+#ifdef DEBUG
                 std::cout << "always_true" << std::endl;
-                return true;
+#endif
+                return (eaten_sandwiches > 2) ? true : false;
             }
         };
-        struct always_false 
+
+        struct user_is_hungry 
         {
             template <class EVT,class FSM,class SourceState,class TargetState>
             bool operator()(EVT const& evt,FSM& fsm,SourceState& src,TargetState& tgt)
             {
+#ifdef DEBUG
                 std::cout << "always_false" << std::endl;
-                return true;
+#endif
+                return (eaten_sandwiches <= 2) ? true : false;
             }
         };
         
-        bool check_ticks(int current, int goal)
-        {
-            (current < goal) ? return false : return true;
-        } 
         typedef my_machine_ p; // makes transition table cleaner
 
         // Transition table for player
         struct transition_table : mpl::vector<
             //    Start     Event         Next      Action               Guard
             //  +---------+-------------+---------+---------------------+----------------------+
-            Row < RemoveBread   , none  , RemoveBread , &SystemTick::hit_ticks , &check_ticks  >,
-            Row < RemoveBread   , none  , SpreadPB    , none , ((SystemTick::_ticks >= 5) ? true : false)  >,
-            Row < SpreadPB      , none  , SpreadJam  , SpreadPBToSpreadJam                             >,
+            Row < RemoveBread       , none  , SpreadPB          , ResetTick, none           >,
+            Row < SpreadPB          , none  , SpreadJam         , ResetTick, none           >,
             //  +---------+-------------+---------+---------------------+----------------------+
-            Row < SpreadJam  , none        , PutHalvesTogether  , SpreadJamToPutHalvesTogether      , always_true          >,
-            Row < PutHalvesTogether  , hit_system_tick      , RemoveBread                                               >
+            Row < SpreadJam         , none  , PutHalvesTogether , ResetTick, none           >,
+            Row < PutHalvesTogether , none  , EatSandwich       , ResetTick, none           >,
+            Row < EatSandwich       , none  , GoToWork          , ResetTick, user_is_full   >,
+            Row < EatSandwich       , none  , RemoveBread       , ResetTick, user_is_hungry >,
+            Row < GoToWork          , none  , Done              , ResetSandwich, none           >
+
             //  +---------+-------------+---------+---------------------+----------------------+
         > {};
+
         // Replaces the default no-transition response.
         template <class FSM,class Event>
         void no_transition(Event const& e, FSM&,int state)
@@ -165,10 +281,15 @@ namespace
 
     }
 }
-#if 1
+#if 0
 int main()
 {
     test();
     return 0;
+}
+#else
+extern "C" void run_machine()
+{
+    test();
 }
 #endif

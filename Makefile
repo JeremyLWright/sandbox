@@ -1,20 +1,22 @@
 CFLAGS=-Wall -O2
 CNOP_FLAGS=-Wall -O0
-CXXFLAGS=-O2
-CXXNOP_FLAGS=-O0
+CXXFLAGS=-O2 -std=gnu++0x
+CXXNOP_FLAGS=-O0 -std=gnu++0x
 LDFLAGS=-lrt
-TARGETS=switch_state switch_state_nop functions functions_nop jump_table jump_table_nop
+TARGETS=switch_state switch_state_nop functions functions_nop jump_table jump_table_nop msm msm_nop
 
 all: $(TARGETS) 
 
 .PHONY: all test
 
-#msm: boost_msm.cpp
-#	g++ $(CXXFLAGS) boost_msm.cpp -o msm
-#
-#msm_nop: boost_msm.cpp
-#	g++ $(CXXNOP_FLAGS) boost_msm.cpp -o msm_nop
-#
+msm: boost_msm.cpp main.o
+	g++ $(CXXFLAGS) -c boost_msm.cpp -o msm.o
+	g++ main.o msm.o -o msm $(LDFLAGS)
+
+msm_nop: boost_msm.cpp main.o
+	g++ $(CXXNOP_FLAGS) -c boost_msm.cpp -o msm_nop.o
+	g++ main.o msm_nop.o -o msm_nop $(LDFLAGS)
+
 main.o: main.c
 	gcc $(CFLAGS) -c main.c -o main.o
 
@@ -45,7 +47,13 @@ switch_state_nop: switch_state.c main.o
 clean:
 	rm -rf $(TARGETS) *.out *.png *.o
 
-test: functions.out functions_nop.out switch_state.out switch_state_nop.out jump_table.out jump_table_nop.out
+test: functions.out functions_nop.out switch_state.out switch_state_nop.out jump_table.out jump_table_nop.out msm.out msm_nop.out
+
+msm.out: msm
+	./run_tests.sh msm msm.out
+
+msm_nop.out: msm_nop
+	./run_tests.sh msm_nop msm_nop.out
 
 functions.out: functions
 	./run_tests.sh functions functions.out

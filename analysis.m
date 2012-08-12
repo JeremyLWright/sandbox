@@ -9,7 +9,7 @@ function [m, s, r] = compare(baseline, other, graphName, label1, label2)
     t = [0:size(baseline(:,2))(1)-1];
 
     mono = baseline(:,2)./baseline(:,2);
-    funcs = other(:,2)./baseline(:,2);
+    funcs = baseline(:,2)./other(:,2);
     plot(t, mono, t, funcs);
     m = mean(funcs);
     s = std(funcs);
@@ -28,9 +28,30 @@ load("switch_state_nop.out");
 load("functions_nop.out");
 load("jump_table.out");
 load("jump_table_nop.out");
+load("msm.out");
+load("msm_nop.out");
 
-[funcAvgO0, funcDevO0, funcRangeO0] = compare(switch_state_nop, functions_nop, "Functions O0", "Switch Sytle", "Calling Functions Style")
-[funcAvgO2, funcDevO2, funcRangeO2] = compare(switch_state, functions, "Functions O2", "Switch Style", "Calling Functions Style")
-[jumpavgO0, jumpDevO0, jumpRangeO0] = compare(switch_state_nop, jump_table_nop, "Jump Table O0", "Switch Style", "Function Pointers")
-[jumpAvgO2, jumpDevO2, jumpRangeO2] = compare(switch_state, jump_table, "Jump Table O2", "Switch Style", "Function Pointers")
+[funcAvgO0, funcDevO0, funcRangeO0] = compare(switch_state_nop  , functions_nop , "Functions O0"    , "Switch Sytle", "Calling Functions Style")
+[funcAvgO2, funcDevO2, funcRangeO2] = compare(switch_state      , functions     , "Functions O2"    , "Switch Style", "Calling Functions Style")
+[jumpavgO0, jumpDevO0, jumpRangeO0] = compare(switch_state_nop  , jump_table_nop, "Jump Table O0"   , "Switch Style", "Function Pointers")
+[jumpAvgO2, jumpDevO2, jumpRangeO2] = compare(switch_state      , jump_table    , "Jump Table O2"   , "Switch Style", "Function Pointers")
+[msmAvgO0, msmDevO0, msmRangeO0]    = compare(switch_state_nop  , msm_nop       , "MSM O0"          , "Switch Style", "Meta State")
+[msmAvgO2, msmDevO2, msmRangeO2]    = compare(switch_state      , msm           , "MSM O2"          , "Switch Style", "Meta State")
+mean_times = [mean(functions(:,2)), mean(jump_table(:,2)), mean(switch_state(:,2)), mean(msm(:,2))];
+mean_labels = ["Functions"; "Object Style"; "Switch"; "C++ MSM"];
+bar(mean_times)
+set(gca, 'xticklabelmode', 'manual');
+set(gca, 'xtick', [1 2 3 4]);
+set(gca, 'yscale', 'log');
+set(gca, 'xticklabel', mean_labels);
+title("Average Optimized Times");
+print -dpng "AverageO2Times.png"
 
+mean_speedups = [funcAvgO2, jumpAvgO2, 1, msmAvgO2];
+bar(mean_speedups);
+set(gca, 'xticklabelmode', 'manual');
+set(gca, 'xtick', [1 2 3 4]);
+%set(gca, 'yscale', 'log');
+set(gca, 'xticklabel', mean_labels);
+title("Optimized Speedups");
+print -dpng "O2Speedups.png"
