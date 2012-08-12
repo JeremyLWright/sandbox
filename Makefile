@@ -3,18 +3,18 @@ CNOP_FLAGS=-Wall -O0
 CXXFLAGS=-O2
 CXXNOP_FLAGS=-O0
 LDFLAGS=-lrt
-TARGETS=switch_state switch_state_nop functions functions_nop jump_table jump_table_nop msm msm_nop
+TARGETS=switch_state switch_state_nop functions functions_nop jump_table jump_table_nop
 
 all: $(TARGETS) 
 
 .PHONY: all test
 
-msm: boost_msm.cpp
-	g++ $(CXXFLAGS) boost_msm.cpp -o msm
-
-msm_nop: boost_msm.cpp
-	g++ $(CXXNOP_FLAGS) boost_msm.cpp -o msm_nop
-
+#msm: boost_msm.cpp
+#	g++ $(CXXFLAGS) boost_msm.cpp -o msm
+#
+#msm_nop: boost_msm.cpp
+#	g++ $(CXXNOP_FLAGS) boost_msm.cpp -o msm_nop
+#
 main.o: main.c
 	gcc $(CFLAGS) -c main.c -o main.o
 
