@@ -1,16 +1,24 @@
 
+function [x, y] = polyfit_and_resample(xdata, ydata, samples)
+    p = polyfit(xdata, ydata', 2);
+    x = linspace(min(xdata), max(xdata), samples);
+    y = polyval(p,x);
+endfunction
+
 function [m, s, r] = compare(baseline, other, graphName, label1, label2)
     t = [0:size(baseline(:,2))(1)-1];
 
     mono = baseline(:,2)./baseline(:,2);
     funcs = other(:,2)./baseline(:,2);
-
     plot(t, mono, t, funcs);
-    legend(label1, label2);
-    title(graphName);
-    print(strcat(graphName, ".png"), "-dpng");
     m = mean(funcs);
     s = std(funcs);
+    line(xlim, [m m]);
+    #line(xlim, [m+s m+s]);
+    #line(xlim, [m-s m-s]);
+    legend(label1, label2, cstrcat("Mean ", label2));
+    title(graphName);
+    print(strcat(graphName, ".png"), "-dpng");
     r = range(funcs);
 endfunction
 

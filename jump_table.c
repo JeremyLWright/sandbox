@@ -7,48 +7,104 @@ typedef struct _State {
 } State_t;
 
 State_t s;
-int g_update=0;
+
+int eat_sandwich();
 
 int done()
 {
-    ++g_update;
+    s.f = done;
     return 0;
 }
 
 int go_to_work()
 {
-    ++g_update;
-    s.f = done;
-}
-
-int eat_sandwich()
-{
-    ++g_update;
-    s.f = go_to_work;
+   static int tick = 20;
+    --tick;
+    if(tick <= 0)
+    {
+        s.f = done;
+    }
+    else
+        s.f = go_to_work;
+    return 0;
 }
 
 int put_halves_together()
 {
-    ++g_update;
-    s.f = eat_sandwich;
+    static int tick = 1;
+    --tick;
+    if(tick <= 0)
+    {
+        tick = 1;
+        s.f = eat_sandwich;
+    }
+    else
+        s.f = put_halves_together;
+    return 0;
 }
 
 int spread_jam()
 {
-    ++g_update;
-    s.f = put_halves_together;
+    static int tick = 2;
+    --tick;
+    if(tick <= 0)
+    {
+        tick = 2;
+        s.f = put_halves_together;
+    }
+    else
+        s.f = spread_jam;
+    return 0;
 }
 
 int spread_peanut_butter()
 {
-    ++g_update;
-    s.f = spread_jam;
+    static int tick = 2;
+    --tick;
+    if(tick <= 0)
+    {
+        tick = 2;
+        s.f = spread_jam;
+    }
+    else
+        s.f = spread_peanut_butter;
+    return 0;
 }
 
 int remove_bread()
 {
-    ++g_update;
-    s.f = spread_peanut_butter;
+     static int tick = 5;
+    --tick;
+    if(tick <= 0)
+    {
+        tick = 5; //reset this state;
+        s.f = spread_peanut_butter;
+    }
+    else
+        s.f = remove_bread;
+    return 0;
+}
+
+int eat_sandwich()
+{
+    static int sandwiches_to_eat = 3;
+    static int tick = 10;
+    --tick;
+    if(tick <= 0 && sandwiches_to_eat <= 0)
+    {
+        sandwiches_to_eat = 3;
+        tick = 10;
+        s.f = remove_bread;
+    }
+    else if(tick <= 0)
+    {
+        --sandwiches_to_eat;
+        tick = 10;
+        s.f = go_to_work;
+    }
+    else
+        s.f = eat_sandwich;
+    return 0;
 }
 
 void run_machine()
@@ -56,26 +112,7 @@ void run_machine()
     s.f = remove_bread;
     while(s.f != done)
     {
-        s.f();
+       s.f();
     }
 }
 
-int main(int argc, const char *argv[])
-{
-    int i = 0;
-    struct timespec t1;
-    struct timespec t2;
-
-    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
-    while(i++ < 1000000)
-    {
-        run_machine();
-    }
-    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t2);
-
-    printf("%ld %ld\n", t2.tv_sec - t1.tv_sec, t2.tv_nsec - t1.tv_nsec);
-
-
-
-    return 0;
-}

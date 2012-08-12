@@ -11,61 +11,68 @@ typedef enum {
     DONE
 } SandwichState_t;
 
-int g_update=0;
-#define DO_SOMETHING() ++g_update
-
-
 void run_machine()
 {
     SandwichState_t s = REMOVE_BREAD;
+    int sandwiches_to_eat = 3;
+    int step_tick = 5; //First step takes 5 ticks
     while(s != DONE)
     {
+        --step_tick;
         switch (s)
         {
             case REMOVE_BREAD:
-                s = SPREAD_PEANUT_BUTTER;
-                DO_SOMETHING();
+                if(step_tick <= 0)
+                {
+                    step_tick = 2; //Next step takes 2 ticks...
+                    s = SPREAD_PEANUT_BUTTER;
+                }
                 break;
             case SPREAD_PEANUT_BUTTER:
-                s = SPREAD_JAM;
-                DO_SOMETHING();
+                if(step_tick <= 0)
+                {
+                    step_tick = 2;
+                    s = SPREAD_JAM;
+                }
                 break;
             case SPREAD_JAM:
-                s = PUT_HALVES_TOGETHER;
-                DO_SOMETHING();
+                if(step_tick <= 0)
+                {
+                    step_tick = 1;
+                    s = PUT_HALVES_TOGETHER;
+                }
                 break;
             case PUT_HALVES_TOGETHER:
-                s = EAT_SANDWICH;
-                DO_SOMETHING();
+                if(step_tick <= 0)
+                {
+                    step_tick = 10;
+                    s = EAT_SANDWICH;
+                }
                 break;
             case EAT_SANDWICH:
-                DO_SOMETHING();
-                s = GO_TO_WORK;
+                if(step_tick <= 0 && sandwiches_to_eat <= 0) //We've eaten all sandwiches
+                {
+                    step_tick = 20;
+                    s = GO_TO_WORK;
+                }
+                else if(step_tick <= 0) //We've eaten 1 more sandwich
+                {
+                    --sandwiches_to_eat;
+                    step_tick = 10;
+                    s = REMOVE_BREAD;
+                }
+                // else Continue eating current sandwich
                 break;
             case GO_TO_WORK:
-                DO_SOMETHING();
+                if(step_tick <= 0)
+                {
+                    s = DONE;
+                }
+                break;
+            case DONE:
                 s = DONE;
                 break;
         }
     }
 }
 
-int main(int argc, const char *argv[])
-{
-    int i = 0;
-    struct timespec t1;
-    struct timespec t2;
-
-    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t1);
-    while(i++ < 1000000)
-    {
-        run_machine();
-    }
-    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t2);
-
-    printf("%d %d\n", t2.tv_sec - t1.tv_sec, t2.tv_nsec - t1.tv_nsec);
-
-
-
-    return 0;
-}
