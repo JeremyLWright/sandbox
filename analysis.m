@@ -30,6 +30,7 @@ load("jump_table.out");
 load("jump_table_nop.out");
 load("msm.out");
 load("msm_nop.out");
+load("cpp_obj.out");
 
 [funcAvgO0, funcDevO0, funcRangeO0] = compare(switch_state_nop  , functions_nop , "Functions O0"    , "Switch Sytle", "Calling Functions Style")
 [funcAvgO2, funcDevO2, funcRangeO2] = compare(switch_state      , functions     , "Functions O2"    , "Switch Style", "Calling Functions Style")
@@ -37,20 +38,22 @@ load("msm_nop.out");
 [jumpAvgO2, jumpDevO2, jumpRangeO2] = compare(switch_state      , jump_table    , "Jump Table O2"   , "Switch Style", "Function Pointers")
 [msmAvgO0, msmDevO0, msmRangeO0]    = compare(switch_state_nop  , msm_nop       , "MSM O0"          , "Switch Style", "Meta State")
 [msmAvgO2, msmDevO2, msmRangeO2]    = compare(switch_state      , msm           , "MSM O2"          , "Switch Style", "Meta State")
-mean_times = [mean(functions(:,2)), mean(jump_table(:,2)), mean(switch_state(:,2)), mean(msm(:,2))];
-mean_labels = ["Functions"; "Object Style"; "Switch"; "C++ MSM"];
+[cpp_objAvgO2, cpp_objDevO2, cpp_objRangeO2]    = compare(switch_state      , cpp_obj           , "C++ O2"          , "Switch Style", "C++ Object")
+
+mean_times = [mean(functions(:,2)), mean(jump_table(:,2)), mean(switch_state(:,2)), mean(cpp_obj(:,2)), mean(msm(:,2))];
+mean_labels = ["Functions"; "Object Style"; "Switch"; "C++ Objs"; "C++ MSM"];
 bar(mean_times)
 set(gca, 'xticklabelmode', 'manual');
-set(gca, 'xtick', [1 2 3 4]);
+set(gca, 'xtick', [1 2 3 4 5]);
 set(gca, 'yscale', 'log');
 set(gca, 'xticklabel', mean_labels);
 title("Average Optimized Times");
 print -dpng "AverageO2Times.png"
 
-mean_speedups = [funcAvgO2, jumpAvgO2, 1, msmAvgO2];
+mean_speedups = [funcAvgO2, jumpAvgO2, 1, cpp_objAvgO2, msmAvgO2];
 bar(mean_speedups);
 set(gca, 'xticklabelmode', 'manual');
-set(gca, 'xtick', [1 2 3 4]);
+set(gca, 'xtick', [1 2 3 4 5]);
 %set(gca, 'yscale', 'log');
 set(gca, 'xticklabel', mean_labels);
 title("Optimized Speedups");

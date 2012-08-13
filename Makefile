@@ -1,13 +1,17 @@
 CFLAGS=-Wall -O2
 CNOP_FLAGS=-Wall -O0
-CXXFLAGS=-O2 -std=gnu++0x
+CXXFLAGS=-O2 -std=gnu++0x -ggdb -g3
 CXXNOP_FLAGS=-O0 -std=gnu++0x
 LDFLAGS=-lrt
-TARGETS=switch_state switch_state_nop functions functions_nop jump_table jump_table_nop msm msm_nop
+TARGETS=switch_state switch_state_nop functions functions_nop jump_table jump_table_nop msm msm_nop cpp_obj
 
 all: $(TARGETS) 
 
 .PHONY: all test
+
+cpp_obj: objs.cpp main.o
+	g++ $(CXXFLAGS) -c objs.cpp -o objs.o
+	g++ main.o objs.o -o cpp_obj $(LDFLAGS)
 
 msm: boost_msm.cpp main.o
 	g++ $(CXXFLAGS) -c boost_msm.cpp -o msm.o
@@ -47,7 +51,7 @@ switch_state_nop: switch_state.c main.o
 clean:
 	rm -rf $(TARGETS) *.out *.png *.o
 
-test: functions.out functions_nop.out switch_state.out switch_state_nop.out jump_table.out jump_table_nop.out msm.out msm_nop.out
+test: functions.out functions_nop.out switch_state.out switch_state_nop.out jump_table.out jump_table_nop.out msm.out msm_nop.out cpp_obj.out
 
 msm.out: msm
 	./run_tests.sh msm msm.out
@@ -72,6 +76,9 @@ switch_state.out: switch_state
 
 switch_state_nop.out: switch_state_nop
 	./run_tests.sh switch_state_nop switch_state_nop.out
+
+cpp_obj.out: cpp_obj
+	./run_tests.sh cpp_obj cpp_obj.out
 
 analysis: test
 	octave analysis.m
