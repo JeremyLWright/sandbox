@@ -1,5 +1,5 @@
 import Data.List 
-import Euler.Prime
+import Euler.NumberTheory
 
 divisors f = sort $ nub $ concat [(primeFactors f), (map product (tails $ primeFactors f))]
 

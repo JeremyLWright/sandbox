@@ -19,5 +19,6 @@ evendown n m
 
 euler5 h = if evendown 20 h then h else 0
 
+main = print $ foldr1 lcm [1..20]
 --This works, but it doesn't tell me the number
 --take 1 (filter (==True) (map evedown10 [2521..]))
