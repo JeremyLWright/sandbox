@@ -1,4 +1,12 @@
-module Euler.NumberTheory ( divisors, primeFactors, primes, properdivisors) where
+module Euler.NumberTheory ( primeFactors, primes, properdivisors) where
+import qualified Data.List as L
+
+sigma n =  [x | x <- [0..n], (gcd x n) == 1]
+phi n = eulerTotient n
+eulerTotient n = length $ sigma n
+
+--A number n for which the sum of divisors rho(n)>2n (http://en.wikipedia.org/wiki/Abundant_number)
+isAbundant n = (sum (sigma n)) > 2*n
 
 primeFactors n = factor n primes
     where
@@ -9,7 +17,7 @@ primeFactors n = factor n primes
 
 primesSlow = 2 : filter ((==1) . length . primeFactors) [3,5..]
 
---Take from paper: http://www.cs.hmc.edu/~oneill/papers/Sieve-JFP.pdf
+--Taken from paper: http://www.cs.hmc.edu/~oneill/papers/Sieve-JFP.pdf
 primes = 2:([3..] `minus` composites)
     where
         composites = union [multiples p | p <- primes]
@@ -24,18 +32,10 @@ union = foldr merge []
         merge' (x:xs) (y:ys) | x < y = x:merge' xs (y:ys)
                              | x == y = x:merge' xs ys
                              | x > y = y:merge' (x:xs) ys
+-- End of primes function
 
 
-
-divisors n = [x | x <- [1..(n-1)], n `rem` x == 0]
---main = print $ divisors 100000000
---real	0m2.599s
---user	0m2.568s
---sys	0m0.024s
-properdivisors n = 1 : [x*y | x <- primeFactors n, y <- primeFactors n]
---filter ((==0) . rem n) [2 .. n `div` 2]
-
-divides m = filter some [m `div` 2, ((m `div` 2)-1)..1]
+properdivisors m = filter some [1..m `div` 2]
     where some n | m `mod` n == 0   = True
                  | otherwise        = False 
 
