@@ -1,5 +1,6 @@
 import Euler.NumberTheory
 import qualified Data.List as L
+import Data.IntSet (toList, fromList)
 
 --data AbundantSums = Perfect | Abundant | Deficient
 --    deriving (Show, Eq, Ord)
@@ -15,12 +16,12 @@ import qualified Data.List as L
 sequence_A048243_Limit = 20161
 
 isAbundant n = (sum $ properdivisors n) > n
-abundantNumbers = filter isAbundant [1..]
+abundants = filter isAbundant [1..sequence_A048243_Limit]
 
-abundantSums limit = L.nub $ [x + y | x <- abundantMemo, y <- abundantMemo]
+abundantSums = sum $ nub' $ [x + y | x <- abundants, y <- abundants, (x+y) < sequence_A048243_Limit]
                     where
-                        abundantMemo = takeWhile (<limit) abundantNumbers
+                        nub' = toList . fromList
 
-nonAbundantSums = [1..sequence_A048243_Limit] L.\\ abundantSums sequence_A048243_Limit
+nonAbundantSums = (sum [1..sequence_A048243_Limit]) - abundantSums 
 
-main = print $ sum nonAbundantSums
+main = print $ nonAbundantSums
