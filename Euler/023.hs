@@ -2,6 +2,17 @@ import Euler.NumberTheory
 import qualified Data.List as L
 import qualified Data.Set as Set
 
+--data AbundantSums = Perfect | Abundant | Deficient
+--    deriving (Show, Eq, Ord)
+--
+--abundant n  | ((sum . divisors) n) == n = Perfect
+--            | ((sum . divisors) n) < n  = Deficient
+--            | ((sum . divisors) n) > n  = Abundant
+--
+--abundantNums = [x | x <- [1..], abundant x == Abundant]
+--
+
+
 isAbundant n = (sum $ divisors n) > n
 abundantNumbers = filter isAbundant [1..]
 
