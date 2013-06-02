@@ -84,3 +84,4 @@ decompose x
  
 problem_17 = length . concatMap decompose $ [1..1000]
 
+main = print problem_17

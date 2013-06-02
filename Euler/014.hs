@@ -21,4 +21,4 @@ collatz x = x:collatz (collatz_step x)
 
 collatz_pair x = (length (collatz x), x)
 
---main = print (maximum (map collatz_pair [1000000,999999..1]))
+main = print (maximum (map collatz_pair [1000000,999999..1]))
