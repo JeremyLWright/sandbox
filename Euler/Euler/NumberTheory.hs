@@ -1,12 +1,16 @@
-module Euler.NumberTheory ( primeFactors, primes, properdivisors) where
+module Euler.NumberTheory ( primeFactors, primes, properdivisors, fib) where
 import qualified Data.List as L
 
 sigma n =  [x | x <- [0..n], (gcd x n) == 1]
 phi n = eulerTotient n
 eulerTotient n = length $ sigma n
 
---A number n for which the sum of divisors rho(n)>2n (http://en.wikipedia.org/wiki/Abundant_number)
-isAbundant n = (sum (sigma n)) > 2*n
+fib = (map fib [0..] !!)
+    where
+        fib 0 = 0
+        fib 1 = 1
+        fib n = fib (n-2) + fib (n-1)
+
 
 primeFactors n = factor n primes
     where
