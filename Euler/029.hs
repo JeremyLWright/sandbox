@@ -1,6 +1,6 @@
-import Data.List
+import Data.Set
 
 nums = [a^b | a <- [2..100], b <- [2..100]]
 
-main = print (length . nub $ nums)
+main = print (size . fromList $ nums)
 
