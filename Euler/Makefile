@@ -1,10 +1,13 @@
 SRCS=$(wildcard *.hs)
 LIBS=$(wildcard Euler\*.hs)
-PROGS=$(patsubst %.hs,%.exe,$(SRCS))
+PROGS=$(patsubst %.hs,%,$(SRCS))
 all: $(PROGS)
 
-%.exe: %.hs $(LIBS)
+%: %.hs $(LIBS)
 	ghc -O2 --make $*.hs
+
+test: all
+	python EulerValues.py
 
 clean: 
 	rm $(PROGS) *.hi *.o
