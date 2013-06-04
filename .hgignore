@@ -1,0 +1,6 @@
+syntax: glob
+*.out
+*.dat
+main
+tags
+*.pdf
