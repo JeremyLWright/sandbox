@@ -6,8 +6,13 @@ all: $(PROGS)
 %: %.hs $(LIBS)
 	ghc -O2 --make $*.hs
 
-test: all
+test: euler.png
+
+times.dat: $(PROGS)
 	python EulerValues.py
+
+euler.png: times.dat
+	octave process.m
 
 clean: 
 	rm $(PROGS) *.hi *.o
