@@ -1,4 +1,4 @@
-module Euler.NumberTheory ( primeFactors, primes, properdivisors, fib) where
+module Euler.NumberTheory ( primeFactors, isPrime, primes, properdivisors, fib) where
 import qualified Data.List as L
 
 sigma n =  [x | x <- [0..n], (gcd x n) == 1]
@@ -38,6 +38,7 @@ union = foldr merge []
                              | x > y = y:merge' (x:xs) ys
 -- End of primes function
 
+isPrime n = any (==n) primes
 
 properdivisors m = filter some [1..m `div` 2]
     where some n | m `mod` n == 0   = True

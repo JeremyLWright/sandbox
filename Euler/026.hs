@@ -1,3 +1,4 @@
+import Data.Ord
 import Data.List
 import Euler.NumberTheory
 
@@ -13,3 +14,14 @@ carmichael (p,a) | p == 2 && a > 2 = 2^(a-2)
 --lambda(n)	1	1	2	2	4	2	6	2	6	 4	10	 2	12	 6	 4
 carmichael2 n = foldr1 lcm $ map carmichael $ grouper $ primeFactors n
 
+remainders d 0 rs = 0
+remainders d r rs = let r' = r `mod` d
+                    in case elemIndex r' rs of
+                        Just i -> i + 1
+                        Nothing -> remainders d (10*r') (r':rs)
+
+recurringCycle d = remainders d 10 []
+
+problem_26 = fst $ maximumBy (comparing snd) [(n , recurringCycle n) | n <- takeWhile (<100000) primes]
+
+main = print problem_26
