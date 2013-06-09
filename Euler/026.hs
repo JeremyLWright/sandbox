@@ -1,5 +1,5 @@
-import Data.Ord
 import Data.List
+import Data.Ord
 import Euler.NumberTheory
 
 grouper :: Ord a => [a] -> [(a, Int)] 

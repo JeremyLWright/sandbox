@@ -18,17 +18,17 @@ problems = (
         ("016", "1366"),
         ("017", "21124"),
         ("018", "1074"),
-        ("019", "171,"),
+        ("019", "171"),
         ("020", "648"),
         ("021", "31626"),
-#        "022":
-#        "023":
-#        "024":
-#        "025":
+        ("022", "871198282"),
+        ("023", "4179871"),
+        ("024", "\"2783915460\""),
+        ("025", "4782"),
         ("026", "983"),
         ("027", "-59231"),
-#        "029":
-#        "034":
+        ("029", "9183"),
+        ("034", "40730"),
 #        "046":
 )
 
@@ -42,6 +42,6 @@ for p,a in problems:
     result = proc.stdout.read().strip()
     if result == a:
         print "[{0}] Passed {1} seconds".format(p, end_time)
-        ftime.write("problem_"+p+"\t"+str(end_time)+"\n")
     else:
         print "[{0}] Failed Expected: {1} Got: {2}".format(p, result, a)
+    ftime.write("problem_"+p+"\t"+str(end_time)+"\n")
