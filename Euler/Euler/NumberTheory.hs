@@ -38,7 +38,7 @@ union = foldr merge []
                              | x > y = y:merge' (x:xs) ys
 -- End of primes function
 
-isPrime n = any (==n) primes
+isPrime n = any (==n) $ takeWhile (<n) primes
 
 properdivisors m = filter some [1..m `div` 2]
     where some n | m `mod` n == 0   = True
