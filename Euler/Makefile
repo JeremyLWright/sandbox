@@ -4,7 +4,8 @@ PROGS=$(patsubst %.hs,%,$(SRCS))
 all: $(PROGS)
 
 %: %.hs $(LIBS)
-	ghc -O2 --make $*.hs
+	echo -n "$*.hs\t" >> compile.dat
+	/usr/bin/time --format=%e ghc -O2 --make $*.hs 2>> compile.dat
 
 test: euler.png
 
@@ -15,4 +16,4 @@ euler.png: times.dat
 	octave process.m
 
 clean: 
-	rm $(PROGS) *.hi *.o
+	rm $(PROGS) *.hi *.o *.dat Euler/*.hi Euler/*.o
