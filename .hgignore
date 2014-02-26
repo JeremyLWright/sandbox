@@ -4,3 +4,5 @@ syntax: glob
 main
 tags
 *.pdf
+rainbow/dist
+

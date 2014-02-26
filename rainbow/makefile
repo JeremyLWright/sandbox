@@ -1,5 +1,5 @@
 CXX=$(HOME)/hemi_platform_tools/compilers/4.8.3/x86_64-unknown-linux-gnu/bin/x86_64-unknown-linux-gnu-g++
-CXX_FLAGS=-Wall -O3 -I$(PWD)/dist/public/nss -I$(PWD)/dist/Linux3.2_x86_64_glibc_PTH_64_OPT.OBJ/include
+CXX_FLAGS=-std=gnu++11 -Wall -O3 -I$(PWD)/dist/public/nss -I$(PWD)/dist/Linux3.2_x86_64_glibc_PTH_64_OPT.OBJ/include
 LD_FLAGS=-L$(PWD)/dist/Linux3.2_x86_64_glibc_PTH_64_OPT.OBJ/lib -lnss3 -lnssutil3 -lplc4 -lplds4 -lnspr4
 
 
