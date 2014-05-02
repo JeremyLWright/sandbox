@@ -60,6 +60,10 @@ int main()
     auto m = 2.0 * si::meter;
     std::cout << quantity<imperial::foot_base_unit::unit_type>(m) << std::endl;
 
+    //auto f = 3 * micron_base_unit::unit_type;
+    //auto j = m + f;
+    //std::cout << quantity<si::meter>(j) << '\n';
+
 #endif
     return 0;
 }
